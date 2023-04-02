@@ -1,0 +1,70 @@
+{
+  "theme_color": "#273e87",
+  "background_color": "#FFF",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "name": "DP Apps",
+  "short_name": "DP-C",
+  "description": "Durapro Solutions Suite Of Applications",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "splash_pages": [
+    {
+      "src": "/images/apple_splash_640.png",
+      "sizes": "640x1136",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple_splash_750.png",
+      "sizes": "750x1334",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple_splash_1242.png",
+      "sizes": "1242x2208",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple_splash_1125.png",
+      "sizes": "1125x2436",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple_splash_1536.png",
+      "sizes": "1536x2048",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple_splash_1668.png",
+      "sizes": "1668x2224",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple_splash_2048.png",
+      "sizes": "2048x2732",
+      "type": "image/png"
+    }
+  ]
+}
