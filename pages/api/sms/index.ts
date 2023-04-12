@@ -68,7 +68,7 @@ export default async function handler(
       .sendSms({
         to: [`${parsed_number}`], // Your phone number
         message: transaction, // Your message
-        from: "17992", // Your shortcode or alphanumeric
+        from: "duraprosms", // Your shortcode or alphanumeric
       })
       .then(() => {
         return res.status(200).json({
