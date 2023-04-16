@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-
+import numeral from "numeral";
 import {
   Avatar,
   Checkbox,
@@ -44,13 +44,13 @@ function UserCommissionTable({ results }: { results: CommissionType[] }) {
                 <Tr key={result.id}>
                   <Td>{result.employee_id?.name || result.employee_id?.id}</Td>
                   <Td>{result.month}</Td>
-                  <Td>{result.target}</Td>
-                  <Td>{result.sales}</Td>
-                  <Td>{result.base_tier}</Td>
-                  <Td>{result.one_percent}</Td>
-                  <Td>{result.two_percent}</Td>
-                  <Td>{result.five_percent}</Td>
-                  <Td>{result.commission}</Td>
+                  <Td>{numeral(result.target).format("0,0") || "N/A"}</Td>
+                  <Td>{numeral(result.sales).format("0,0") || "N/A"}</Td>
+                  <Td>{numeral(result.base_tier).format("0,0") || "N/A"}</Td>
+                  <Td>{numeral(result.one_percent).format("0,0") || "N/A"}</Td>
+                  <Td>{numeral(result.two_percent).format("0,0") || "N/A"}</Td>
+                  <Td>{numeral(result.five_percent).format("0,0") || "N/A"}</Td>
+                  <Td>{numeral(result.commission).format("0,0") || "N/A"}</Td>
                 </Tr>
               ))}
             </Tbody>
