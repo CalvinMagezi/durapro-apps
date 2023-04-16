@@ -97,11 +97,13 @@ function CommissionLayout({ children }: React.PropsWithChildren<{}>) {
           </div>
         </div>
       </Box>
-      <div className="flex">
+      <div className="flex w-full">
         <div className="hidden lg:flex">
           <Sidebar />
         </div>
-        <div className="flex-grow lg:p-5">{children}</div>
+        <div className="flex-grow overflow-auto lg:p-2">
+          <div>{children}</div>
+        </div>
       </div>
     </Box>
   );

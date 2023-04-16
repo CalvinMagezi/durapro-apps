@@ -26,39 +26,40 @@ function AuthenticationForms() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
     if (isRegistration) {
-      if (data.password !== data.confirm_password) {
-        toast.error("Passwords do not match ", {
-          duration: 8000,
-        });
-        setLoading(false);
-        return;
-      }
+      return;
+      // if (data.password !== data.confirm_password) {
+      //   toast.error("Passwords do not match ", {
+      //     duration: 8000,
+      //   });
+      //   setLoading(false);
+      //   return;
+      // }
 
-      //   console.log(data.password);
+      // //   console.log(data.password);
 
-      const { data: new_user, error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            full_name: data.full_name,
-          },
-        },
-      });
+      // const { data: new_user, error } = await supabase.auth.signUp({
+      //   email: data.email,
+      //   password: data.password,
+      //   options: {
+      //     data: {
+      //       full_name: data.full_name,
+      //     },
+      //   },
+      // });
 
-      if (error) {
-        console.log(error);
-        toast.error(error.message, {
-          duration: 3000,
-        });
-        setLoading(false);
-        return;
-      }
-      toast.success("Successfully registered, please sign in", {
-        duration: 3000,
-      });
-      setLoading(false);
-      setIsRegistration(false);
+      // if (error) {
+      //   console.log(error);
+      //   toast.error(error.message, {
+      //     duration: 3000,
+      //   });
+      //   setLoading(false);
+      //   return;
+      // }
+      // toast.success("Successfully registered, please sign in", {
+      //   duration: 3000,
+      // });
+      // setLoading(false);
+      // setIsRegistration(false);
     } else {
       //   console.log(data.password);
       const { error } = await supabase.auth.signInWithPassword({
@@ -132,7 +133,7 @@ function AuthenticationForms() {
                   Sign In
                 </Button>
               </div>
-              <div className="flex justify-center items-center w-full">
+              {/* <div className="flex justify-center items-center w-full">
                 <Text
                   className="text-center text-sm font-semibold cursor-pointer hover:scale-105 transition duration-105 ease-in-out"
                   onClick={() => setIsRegistration(true)}
@@ -140,7 +141,7 @@ function AuthenticationForms() {
                   {"Don't"} have an account?{" "}
                   <span className="text-blue-500">Sign Up</span>
                 </Text>
-              </div>
+              </div> */}
             </div>
           </form>
         </div>

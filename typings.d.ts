@@ -53,3 +53,23 @@ export interface SandRecoveryStatementType {
   balance_after_recovery: string;
   cumulative: string;
 }
+
+export interface EmployeeType {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface CommissionType {
+  id: string;
+  created_at: string;
+  employee_id: EmployeeType;
+  month: string;
+  target: number;
+  sales: number;
+  commission: number;
+  base_tier: number;
+  one_percent: number;
+  two_percent: number;
+  five_percent: number;
+}
