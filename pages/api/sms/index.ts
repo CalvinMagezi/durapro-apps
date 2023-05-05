@@ -27,9 +27,7 @@ export default async function handler(
       .json({ success: false, message: "Bad method call." });
   }
 
-  const { phone_number, api_token, api_secret, transaction } = req.body;
-
-  // console.log(req.body);
+  const { phone_numbers, api_token, api_secret, transaction } = req.body;
 
   if (!api_token || !api_secret)
     return res.status(400).json({
@@ -44,56 +42,51 @@ export default async function handler(
     });
   }
 
-  if (!phone_number || !transaction)
+  if (phone_numbers.length <= 0 || !transaction)
     return res.status(400).json({
       success: false,
       message: "Please supply a valid phone_number and transaction",
     });
 
-  const p = parsePhoneNumber(phone_number, "UG");
+  const successful_dispatches: string[] = [];
+  const failed_dispatches: string[] = [];
 
-  if (!p || !p.isValid()) {
-    return res.status(400).json({
-      success: false,
-      message: "Error parsing phone number",
-    });
-  }
+  phone_numbers?.map(async (phone_number: string) => {
+    const p = parsePhoneNumber(phone_number, "UG");
+    if (!p || !p.isValid()) {
+      console.log("Error parsing phone number");
+    } else {
+      const parsed_number = p.number;
 
-  const parsed_number = p.number;
-
-  // console.log(parsed_number);
-
-  try {
-    await africasTalking
-      .sendSms({
-        to: [`${parsed_number}`], // Your phone number
-        message: transaction, // Your message
-        from: "duraprosms", // Your shortcode or alphanumeric
-      })
-      .then(() => {
-        return res.status(200).json({
-          success: true,
-          message: `Successfully dispatched message: ${transaction} to ${parsed_number}`,
-        });
-      })
-      .catch((error) => {
-        const message = error.response.data;
-        console.log(message);
+      try {
+        await africasTalking
+          .sendSms({
+            to: [`${parsed_number}`], // Your phone number
+            message: transaction, // Your message
+            from: "Quickset", // Your shortcode or alphanumeric
+          })
+          .then(() => {
+            successful_dispatches.push(parsed_number);
+          })
+          .catch((error) => {
+            const message = error.response.data;
+            console.log(message);
+            failed_dispatches.push(parsed_number);
+          });
+      } catch (error) {
+        console.log(error);
         return res.status(400).json({
           success: false,
-          message: message,
+          message: "Error dispatching message to Africa's Talking",
         });
-      });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      success: false,
-      message: "Error dispatching message to Africa's Talking",
-    });
-  }
+      }
+    }
 
-  // return res.status(200).json({
-  //   success: true,
-  //   message: `Successfully dispatched message: ${transaction} to ${parsed_number}`,
-  // });
+    return res.status(200).json({
+      success: true,
+      message: `Successfully dispatched messages to: ${successful_dispatches.join(
+        ", "
+      )}. Failed to dispatch to: ${failed_dispatches.join(", ")}`,
+    });
+  });
 }

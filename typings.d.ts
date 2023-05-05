@@ -73,3 +73,19 @@ export interface CommissionType {
   two_percent: number;
   five_percent: number;
 }
+
+export interface CashbackFeedbackType {
+  id: string;
+  created_at: string;
+  first_name: string;
+  last_name: string;
+  contact: string;
+  shop_name: string;
+  city: string;
+  site_location: string;
+  qty_bought: number;
+  redeemed: number;
+  not_redeemed: number;
+  comment: string;
+  user_id: string;
+}

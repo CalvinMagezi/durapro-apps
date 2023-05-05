@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { DBProvider } from "@/contexts/DBContext";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -83,14 +84,16 @@ function MyApp({ Component, pageProps }: AppProps) {
             <link rel="apple-touch-icon" href="/icons/favicon-32x32.png"></link>
             <meta name="theme-color" content="#273e87" />
           </Head>
-          <Skeleton
-            isLoaded={!loading}
-            width="100vw"
-            fadeDuration={1}
-            className="z-[99] min-h-screen"
-          >
-            <Component {...pageProps} />
-          </Skeleton>
+          <DBProvider>
+            <Skeleton
+              isLoaded={!loading}
+              width="100vw"
+              fadeDuration={1}
+              className="z-[99] min-h-screen"
+            >
+              <Component {...pageProps} />
+            </Skeleton>
+          </DBProvider>
         </ChakraProvider>
       </RecoilRoot>
     </QueryClientProvider>

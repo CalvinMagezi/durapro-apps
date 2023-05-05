@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 
 export default function Home() {
   const [authenticated, setAuthenticated] = useRecoilState(AuthAtom);
-  const { user, manualFetch, setProfile } = useUser();
+  const { user, manualFetch, setProfile, profile } = useUser();
 
   const logout = async () => {
     await supabase.auth
@@ -37,7 +37,7 @@ export default function Home() {
     }
   }, [user]);
 
-  console.log(user);
+  console.log(profile);
   return (
     <div>
       {!authenticated ? (
@@ -66,14 +66,28 @@ export default function Home() {
               Select Application
             </Heading>
             <Grid className="grid-cols-1 md:grid-cols-2 gap-8 mt-6 p-3 items-center">
+              {profile?.role === "admin" && (
+                <GridItem>
+                  <Link href="/apps/commission" passHref>
+                    <div className=" w-full rounded-xl border hover:border-[#273e87] p-6 text-left hover:text-[#273e87] focus:text-[#273e87] cursor-pointer">
+                      <h3 className="text-2xl font-bold">
+                        Commission Application &rarr;
+                      </h3>
+                      <p className="mt-4 text-xl">
+                        Access the commission tracker application.
+                      </p>
+                    </div>
+                  </Link>
+                </GridItem>
+              )}
               <GridItem>
-                <Link href="/apps/commission" passHref>
+                <Link href="/apps/cashback_feedback" passHref>
                   <div className=" w-full rounded-xl border hover:border-[#273e87] p-6 text-left hover:text-[#273e87] focus:text-[#273e87] cursor-pointer">
                     <h3 className="text-2xl font-bold">
-                      Commission Application &rarr;
+                      Cashback Feedback Application &rarr;
                     </h3>
                     <p className="mt-4 text-xl">
-                      Access the commission tracker application.
+                      Access the cashback feedback application.
                     </p>
                   </div>
                 </Link>
