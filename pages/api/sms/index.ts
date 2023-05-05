@@ -84,9 +84,7 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      message: `Successfully dispatched messages to: ${successful_dispatches.join(
-        ", "
-      )}. Failed to dispatch to: ${failed_dispatches.join(", ")}`,
+      message: `Successfully dispatched messages.`,
     });
   });
 }
