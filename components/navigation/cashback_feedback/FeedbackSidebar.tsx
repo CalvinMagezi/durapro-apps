@@ -1,5 +1,5 @@
 import React from "react";
-import { FaAppStore, FaPlus } from "react-icons/fa";
+import { FaAppStore, FaPlus, FaUsers } from "react-icons/fa";
 import NavbarLink from "../NavbarLink";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { TbFileReport } from "react-icons/tb";
@@ -13,6 +13,11 @@ function FeedbackSidebar() {
           title="Dashboard"
           Icon={AiOutlineDashboard}
           href="/apps/cashback_feedback"
+        />
+        <NavbarLink
+          title="Tilers"
+          Icon={FaUsers}
+          href="/apps/cashback_feedback/tilers"
         />
         <NavbarLink
           title="New Feedback"

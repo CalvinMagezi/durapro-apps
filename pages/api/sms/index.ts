@@ -21,6 +21,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== "POST") {
     return res
       .status(500)
@@ -58,6 +67,8 @@ export default async function handler(
     } else {
       const parsed_number = p.number;
 
+      console.log(parsed_number);
+
       try {
         await africasTalking
           .sendSms({
@@ -81,10 +92,10 @@ export default async function handler(
         });
       }
     }
+  });
 
-    return res.status(200).json({
-      success: true,
-      message: `Successfully dispatched messages.`,
-    });
+  return res.status(200).json({
+    success: true,
+    message: `Successfully dispatched messages.`,
   });
 }

@@ -8,6 +8,7 @@ export interface ProfileType {
   phone_number: string;
   role: string;
   first_login: boolean;
+  redeemed_codes: CashbackCodeType[];
 }
 
 export interface SupplierType {
@@ -88,4 +89,17 @@ export interface CashbackFeedbackType {
   not_redeemed: number;
   comment: string;
   user_id: string;
+}
+
+export interface CashbackCodeType {
+  _id: string;
+  _createdAt: string;
+  code: string;
+  product_name: string;
+  redeemed_by: ProfileType[];
+  redeemed: boolean;
+  redeemed_on: string;
+  funds_disbursed: boolean;
+  disbursed_on: string;
+  mm_confirmation: string;
 }
