@@ -12,14 +12,9 @@ const africasTalking = new Client({
   username: process.env.NEXT_AT_USERNAME!,
 });
 
-type Data = {
-  success: boolean;
-  message: string;
-};
-
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
   // res.setHeader("Access-Control-Allow-Origin", "*");
   // res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -60,42 +55,53 @@ export default async function handler(
   const successful_dispatches: string[] = [];
   const failed_dispatches: string[] = [];
 
-  phone_numbers?.map(async (phone_number: string) => {
-    const p = parsePhoneNumber(phone_number, "UG");
-    if (!p || !p.isValid()) {
-      console.log("Error parsing phone number");
-    } else {
-      const parsed_number = p.number;
+  if (phone_numbers.length > 0) {
+    for (let i = 0; i < phone_numbers.length; i++) {
+      const phone_number = phone_numbers[i];
+      const p = parsePhoneNumber(phone_number, "UG");
+      if (!p || !p.isValid()) {
+        console.log("Error parsing phone number");
+      } else {
+        const parsed_number = p.number;
 
-      console.log(parsed_number);
+        // console.log(parsed_number);
 
-      try {
-        await africasTalking
-          .sendSms({
-            to: [`${parsed_number}`], // Your phone number
-            message: transaction, // Your message
-            from: "Quickset", // Your shortcode or alphanumeric
-          })
-          .then(() => {
-            successful_dispatches.push(parsed_number);
-          })
-          .catch((error) => {
-            const message = error.response.data;
-            console.log(message);
-            failed_dispatches.push(parsed_number);
+        try {
+          await africasTalking
+            .sendSms({
+              to: [`${parsed_number}`], // Your phone number
+              message: transaction, // Your message
+              from: "Quickset", // Your shortcode or alphanumeric
+            })
+            .then(() => {
+              successful_dispatches.push(parsed_number);
+              console.log("Successfully dispatched to " + parsed_number);
+            })
+            .catch((error) => {
+              const message = error.response.data;
+              console.log(message);
+              failed_dispatches.push(parsed_number);
+            });
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({
+            success: false,
+            message: "Error dispatching message to Africa's Talking",
           });
-      } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-          success: false,
-          message: "Error dispatching message to Africa's Talking",
-        });
+        }
       }
     }
-  });
 
-  return res.status(200).json({
-    success: true,
-    message: `Successfully dispatched messages.`,
-  });
+    return res.status(200).json({
+      success: true,
+      message: "Successfully dispatched messages",
+      successful_dispatches,
+      failed_dispatches,
+    });
+  } else {
+    return res.status(400).json({
+      success: false,
+      message: "No phone numbers supplied",
+    });
+  }
 }
