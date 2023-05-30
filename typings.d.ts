@@ -96,10 +96,36 @@ export interface CashbackCodeType {
   _createdAt: string;
   code: string;
   product_name: string;
-  redeemed_by: ProfileType[];
+  redeemed_by: string;
   redeemed: boolean;
   redeemed_on: string;
   funds_disbursed: boolean;
   disbursed_on: string;
   mm_confirmation: string;
+}
+
+export interface TilerProfileType {
+  _id: string;
+  createdAt: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  shop_name: string;
+  city: string;
+  site_location: string;
+  quantity_bought: string;
+  total_redeemed_codes: number;
+  total_paid_codes: number;
+  total_unpaid_codes: number;
+  comment: string;
+  redeemed_codes?: CashbackCodeType[];
+}
+
+export interface CashbackTrackingRequestType {
+  id: string;
+  created_at: string;
+  request_by: string;
+  request_for: string;
+  isConflict: boolean;
+  notes: string;
 }

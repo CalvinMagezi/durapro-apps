@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { GiPayMoney } from "react-icons/gi";
+import { FiUserCheck } from "react-icons/fi";
 import CheckRedeemed from "@/helpers/CheckRedeemed";
 
 function AllTilersTable({ users }: { users: ProfileType[] }) {
@@ -33,7 +34,7 @@ function AllTilersTable({ users }: { users: ProfileType[] }) {
                 <Th color="white">Unpaid Codes Redeemed </Th>
                 <Th color="white">Total Codes Redeemed </Th>
                 <Th color="white">Person In-charge</Th>
-                <Th color="white">Actions</Th>
+                <Th color="white">Assign</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -59,8 +60,8 @@ function AllTilersTable({ users }: { users: ProfileType[] }) {
                   <Td></Td>
                   <Td>
                     <IconButton
-                      aria-label="Pay"
-                      icon={<GiPayMoney />}
+                      aria-label="Assign"
+                      icon={<FiUserCheck />}
                       colorScheme="green"
                     />
                   </Td>
