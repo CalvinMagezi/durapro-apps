@@ -2,7 +2,11 @@ import FeedbackLayout from "@/components/layouts/FeedbackLayout";
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { supabase } from "@/lib/supabaseClient";
-import { CashbackCodeType, TilerProfileType } from "@/typings";
+import {
+  CashbackCodeType,
+  TilerProfileType,
+  TilerTransactionType,
+} from "@/typings";
 import {
   Button,
   Grid,
@@ -10,6 +14,7 @@ import {
   Heading,
   Input,
   Select,
+  Skeleton,
   Text,
   Textarea,
 } from "@chakra-ui/react";
@@ -20,6 +25,9 @@ import { useRouter } from "next/router";
 import useUser from "@/hooks/useUser";
 import CheckRedeemed from "@/helpers/CheckRedeemed";
 import AllCodesTable from "@/components/tables/cashback_feedback/AllCodesTable";
+import NewTransactionModal from "@/components/modals/cashback_feedback/NewTransactionModal";
+import { useQuery } from "@tanstack/react-query";
+import TilerTransactionsTable from "@/components/tables/cashback_feedback/TilerTransactionsTable";
 
 type FormValues = {
   first_name: string;
@@ -80,6 +88,25 @@ function SingleTilerPage({
   const [redeemed_codes, setRedeemedCodes] = useState<CashbackCodeType[]>([]);
   const [filter, setFilter] = useState("all");
 
+  const { data: transactions, isLoading } = useQuery(
+    ["tiler_transactions", tiler?._id],
+    async () => {
+      const { data, error } = await supabase
+        .from("tiler_transaction")
+        .select("*")
+        .eq("tiler_profile", tiler?._id);
+
+      if (error) {
+        console.log(error);
+      }
+
+      return data as TilerTransactionType[];
+    },
+    {
+      enabled: !!tiler,
+    }
+  );
+
   const {
     register,
     handleSubmit,
@@ -99,18 +126,6 @@ function SingleTilerPage({
       .update({
         first_name: data.first_name,
         last_name: data.last_name,
-        shop_name: data.shop_name,
-        city: data.city,
-        site_location: data.site_location,
-        total_redeemed_codes: parseInt(data.redeemed),
-        total_paid_codes: user_codes.filter(
-          (code) => code.funds_disbursed === true
-        ).length,
-        total_unpaid_codes: user_codes.filter(
-          (code) => code.funds_disbursed === false
-        ).length,
-        quantity_bought: parseInt(data.quantity_bought),
-        comment: data.comment,
       })
       .eq("_id", tiler._id);
 
@@ -153,6 +168,9 @@ function SingleTilerPage({
       <Heading className="text-center mt-5" size="md">
         Total Of: {user_codes?.length} Codes Redeemed
       </Heading>
+      <div className="flex justify-center w-full mt-5">
+        <NewTransactionModal tiler={tiler} />
+      </div>
 
       <div className="max-w-7xl mx-auto">
         <form className="mt-10" onSubmit={handleSubmit(onSubmit)}>
@@ -182,65 +200,7 @@ function SingleTilerPage({
                 defaultValue={tiler?.phone_number}
               />
             </GridItem>
-            <GridItem>
-              <Text className="font-semibold mb-3">Shop Name:</Text>
-              <Input
-                type="text"
-                {...register("shop_name")}
-                defaultValue={tiler?.shop_name}
-              />
-            </GridItem>
-            <GridItem>
-              <Text className="font-semibold mb-3">City:</Text>
-              <Input
-                type="text"
-                {...register("city")}
-                defaultValue={tiler?.city}
-              />
-            </GridItem>
-            <GridItem>
-              <Text className="font-semibold mb-3">Site Location:</Text>
-              <Input
-                type="text"
-                {...register("site_location")}
-                defaultValue={tiler?.site_location}
-              />
-            </GridItem>
-            <GridItem>
-              <Text className="font-semibold mb-3">Quantity Bought:</Text>
-              <Input
-                type="number"
-                {...register("quantity_bought")}
-                defaultValue={tiler?.quantity_bought}
-              />
-            </GridItem>
-            <GridItem>
-              <Text className="font-semibold mb-3">Redeemed:</Text>
-              <Input
-                readOnly={true}
-                type="number"
-                {...register("redeemed")}
-                defaultValue={CheckRedeemed(user_codes)}
-              />
-            </GridItem>
-            <GridItem>
-              <Text className="font-semibold mb-3">Not Redeemed:</Text>
-              <Input
-                type="number"
-                readOnly={true}
-                {...register("not_redeemed")}
-                defaultValue={
-                  parseInt(tiler?.quantity_bought) - user_codes.length
-                }
-              />
-            </GridItem>
-            <GridItem className="md:col-span-2">
-              <Text className="font-semibold mb-3">Comment:</Text>
-              <Textarea
-                {...register("comment")}
-                defaultValue={tiler?.comment}
-              />
-            </GridItem>
+
             <GridItem>
               <Button
                 colorScheme="green"
@@ -248,7 +208,7 @@ function SingleTilerPage({
                 className="w-full h-full"
                 isLoading={loading}
               >
-                Submit
+                Update Details
               </Button>
             </GridItem>
           </Grid>
@@ -256,7 +216,26 @@ function SingleTilerPage({
       </div>
 
       <div className="mt-10">
-        <Heading className="mb-10">Redeemed Codes:</Heading>
+        <Heading className="mb-10" size="lg">
+          Transaction Details:
+        </Heading>
+
+        <Skeleton isLoaded={!isLoading}>
+          {transactions && transactions.length > 0 ? (
+            <TilerTransactionsTable
+              data={transactions}
+              total={transactions.length}
+            />
+          ) : (
+            <div className="text-center">No transactions found</div>
+          )}
+        </Skeleton>
+      </div>
+
+      <div className="mt-10">
+        <Heading className="mb-10" size="lg">
+          Redeemed Codes:
+        </Heading>
         <div className="flex items-center justify-between w-full">
           <div>
             <Heading size="md" className="mb-3">

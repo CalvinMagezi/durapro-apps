@@ -140,6 +140,8 @@ function TilersPage() {
     }
   }, [term, show, data, filter]);
 
+  console.log(data);
+
   return (
     <FeedbackLayout>
       <Heading className="text-center">All Tilers:</Heading>

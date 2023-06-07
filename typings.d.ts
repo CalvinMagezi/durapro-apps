@@ -129,3 +129,15 @@ export interface CashbackTrackingRequestType {
   isConflict: boolean;
   notes: string;
 }
+
+export interface TilerTransactionType {
+  id: string;
+  created_at: string;
+  transaction_date: string;
+  tiler_profile: TilerProfileType;
+  shop_name: string;
+  city: string;
+  site_location: string;
+  quantity_bought: string;
+  comment: string;
+}

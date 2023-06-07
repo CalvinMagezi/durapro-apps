@@ -23,14 +23,14 @@ import { toast } from "react-hot-toast";
 
 import { useDownloadExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
-import { CashbackCodeType } from "@/typings";
+import { CashbackCodeType, TilerTransactionType } from "@/typings";
 import { queryClient } from "@/pages/_app";
 
-function AllCodesTable({
-  codes,
+function TilerTransactionsTable({
+  data,
   total,
 }: {
-  codes: CashbackCodeType[];
+  data: TilerTransactionType[];
   total: number;
 }) {
   const [codeIds, setCodeIds] = useState<string[]>([]);
@@ -92,36 +92,33 @@ function AllCodesTable({
             <Thead>
               <Tr color="gray">
                 <Th>#</Th>
-                <Th>Code</Th>
-                <Th>Product </Th>
-                <Th>Status</Th>
-                <Th>Redeemed On</Th>
-                <Th>Funds Disbursed</Th>
-                <Th>Disbursed On</Th>
-                <Th>Receipt #</Th>
+                <Th>City</Th>
+                <Th>Shop Name</Th>
+                <Th>Site Location</Th>
+                <Th>Quantity Bought</Th>
+                <Th>Transaction Date</Th>
+                {/* <Th>Action</Th> */}
               </Tr>
             </Thead>
             <Tbody>
-              {codes?.map((code, index) => (
-                <Tr key={code._id} className="flex-shrink-0">
+              {data?.map((d, index) => (
+                <Tr key={d.id} className="flex-shrink-0">
                   <Td>{index + 1}</Td>
-                  <Td>{code.code}</Td>
-                  <Td>{code.product_name}</Td>
                   <Td>
-                    {code.redeemed === true ? "Redeemed" : "Not yet redeemed"}
+                    <Text>{d.city}</Text>
                   </Td>
                   <Td>
-                    {code.redeemed_on && (
-                      <>{format(new Date(code.redeemed_on), "PPp")}</>
-                    )}
+                    <Text>{d.shop_name}</Text>
                   </Td>
-                  <Td>{code.funds_disbursed ? "Yes" : "No"}</Td>
                   <Td>
-                    {code.disbursed_on && (
-                      <>{format(new Date(code.disbursed_on), "PPp")}</>
-                    )}
+                    <Text>{d.site_location}</Text>
                   </Td>
-                  <Td>{code.mm_confirmation}</Td>
+                  <Td>
+                    <Text>{d.quantity_bought}</Text>
+                  </Td>
+                  <Td>
+                    <Text>{format(new Date(d.transaction_date), "PPp")}</Text>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
@@ -132,4 +129,4 @@ function AllCodesTable({
   );
 }
 
-export default AllCodesTable;
+export default TilerTransactionsTable;
