@@ -23,15 +23,19 @@ import { toast } from "react-hot-toast";
 
 import { useDownloadExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
-import { CashbackCodeType, TilerTransactionType } from "@/typings";
+import { CashbackCodeType, ProfileType, TilerTransactionType } from "@/typings";
 import { queryClient } from "@/pages/_app";
 
 function TilerTransactionsTable({
   data,
   total,
+  isAdmin,
+  personInCharge,
 }: {
   data: TilerTransactionType[];
   total: number;
+  isAdmin?: boolean;
+  personInCharge?: ProfileType;
 }) {
   const [codeIds, setCodeIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -96,7 +100,7 @@ function TilerTransactionsTable({
                 <Th>Shop Name</Th>
                 <Th>Site Location</Th>
                 <Th>Quantity Bought</Th>
-                <Th>Transaction Date</Th>
+                {isAdmin && <Th>Person In Charge</Th>}
                 {/* <Th>Action</Th> */}
               </Tr>
             </Thead>
@@ -116,9 +120,11 @@ function TilerTransactionsTable({
                   <Td>
                     <Text>{d.quantity_bought}</Text>
                   </Td>
-                  <Td>
-                    <Text>{format(new Date(d.transaction_date), "PPp")}</Text>
-                  </Td>
+                  {isAdmin && (
+                    <Td>
+                      <Text>{d.tiler_profile?.tracked_by?.email}</Text>
+                    </Td>
+                  )}
                 </Tr>
               ))}
             </Tbody>

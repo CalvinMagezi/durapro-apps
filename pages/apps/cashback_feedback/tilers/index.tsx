@@ -146,7 +146,10 @@ function TilersPage() {
     <FeedbackLayout>
       <Heading className="text-center">All Tilers:</Heading>
 
-      <Skeleton isLoaded={!isLoading}>
+      <Skeleton
+        isLoaded={!isLoading}
+        height={status === "loading" ? "100vh" : "auto"}
+      >
         {data && (
           <>
             <div className="flex items-center space-x-4 w-full">

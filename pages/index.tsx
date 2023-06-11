@@ -9,6 +9,7 @@ import Link from "next/link";
 import { FaSignOutAlt } from "react-icons/fa";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "react-hot-toast";
+import FirstLoginModal from "@/components/modals/cashback_feedback/FirstLoginModal";
 
 export default function Home() {
   const [authenticated, setAuthenticated] = useRecoilState(AuthAtom);
@@ -94,6 +95,7 @@ export default function Home() {
               </GridItem>
             </Grid>
           </main>
+          {profile?.first_login === false && <FirstLoginModal />}
 
           <footer className="flex h-24 w-full items-center justify-center border-t mt-10">
             <div

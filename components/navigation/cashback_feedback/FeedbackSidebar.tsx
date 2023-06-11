@@ -2,6 +2,7 @@ import React from "react";
 import {
   FaAppStore,
   FaBullseye,
+  FaCartPlus,
   FaChevronCircleDown,
   FaPlus,
   FaUsers,
@@ -41,15 +42,15 @@ function FeedbackSidebar() {
               <FaChevronCircleDown />
             </div>
 
-            <NavbarLink
+            {/* <NavbarLink
               title="All Tilers"
               Icon={FaUsers}
               href="/apps/cashback_feedback/tilers"
-            />
+            /> */}
             <NavbarLink
-              title="Tracking Requests"
-              Icon={FaBullseye}
-              href="/apps/cashback_feedback/tilers/tracking-requests"
+              title="Tiler Transactions"
+              Icon={FaCartPlus}
+              href="/apps/cashback_feedback/tilers/transactions"
             />
           </>
         )}

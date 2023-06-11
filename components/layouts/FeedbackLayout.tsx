@@ -20,6 +20,7 @@ import Image from "next/image";
 import { FaChevronDown } from "react-icons/fa";
 import FeedbackSidebar from "../navigation/cashback_feedback/FeedbackSidebar";
 import FeedbackMobileMenu from "../navigation/cashback_feedback/FeedbackMobileMenu";
+import FirstLoginModal from "../modals/cashback_feedback/FirstLoginModal";
 
 function FeedbackLayout({ children }: React.PropsWithChildren<{}>) {
   const bg = useColorModeValue("white", "black");

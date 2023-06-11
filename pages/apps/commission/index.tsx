@@ -15,7 +15,7 @@ const styles = {
 function CommissionAppPage() {
   const { user, manualFetch } = useUser();
   const [months, setMonths] = useState<string[]>([]);
-  const [currentMonth, setCurrentMonth] = useState<string>("November 2022");
+  const [currentMonth, setCurrentMonth] = useState<string>("June 2023");
   const [results, setResults] = useState<CommissionType[]>([]);
 
   const { data, isLoading, error } = useQuery(
@@ -46,14 +46,15 @@ function CommissionAppPage() {
   useEffect(() => {
     if (data) {
       const months = data.map((d) => d.month);
-      const uniqueMonths = [];
+      const uniqueMonths = Array.from(new Set(months)); // Remove duplicates
 
-      for (let i = 0; i < months.length; i++) {
-        if (uniqueMonths.indexOf(months[i]) === -1) {
-          uniqueMonths.push(months[i]);
-        }
-      }
-      setMonths(uniqueMonths);
+      const sortedMonths = uniqueMonths.sort((a, b) => {
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        return dateB.getTime() - dateA.getTime(); // Sort in descending order
+      });
+
+      setMonths(sortedMonths);
     }
 
     if (data && currentMonth) {

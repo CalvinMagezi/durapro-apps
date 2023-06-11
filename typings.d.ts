@@ -119,6 +119,7 @@ export interface TilerProfileType {
   total_unpaid_codes: number;
   comment: string;
   redeemed_codes?: CashbackCodeType[];
+  tracked_by?: ProfileType;
 }
 
 export interface CashbackTrackingRequestType {
