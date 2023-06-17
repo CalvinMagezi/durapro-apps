@@ -1,8 +1,9 @@
 import FeedbackLayout from "@/components/layouts/FeedbackLayout";
 import AllTilersTable from "@/components/tables/cashback_feedback/AllTilersTable";
+import TilerProfilesTable from "@/components/tables/cashback_feedback/TilerProfilesTable";
 import CheckRedeemed from "@/helpers/CheckRedeemed";
 import { supabase } from "@/lib/supabaseClient";
-import { CashbackCodeType, ProfileType } from "@/typings";
+import { CashbackCodeType, ProfileType, TilerProfileType } from "@/typings";
 import {
   Heading,
   IconButton,
@@ -63,82 +64,20 @@ function TilersPage() {
   }
 
   const fetchAllUsers = async () => {
-    const response = await fetch("/api/users/all");
-    const res = await response.json();
+    const { data: res, error } = await supabase
+      .from("tiler_profile")
+      .select("*, tracked_by(*)");
+    // const data = await fetchAllRedeemedCodes(null);
 
-    const data = await fetchAllRedeemedCodes(null);
-    console.log(res);
-    console.log(data);
-
-    if (res.success) {
-      // create a lookup table from redeemed codes by phone number
-      const redeemedCodesByPhoneNumber: { [key: string]: CashbackCodeType[] } =
-        {};
-      data.forEach((code) => {
-        if (!redeemedCodesByPhoneNumber[code.redeemed_by]) {
-          redeemedCodesByPhoneNumber[code.redeemed_by] = [];
-        }
-        redeemedCodesByPhoneNumber[code.redeemed_by].push(code);
-      });
-
-      const users_with_codes = res.users.map((user: ProfileType) => {
-        const user_codes = redeemedCodesByPhoneNumber[user.phone_number] || [];
-        return { ...user, redeemed_codes: user_codes };
-      });
-      return users_with_codes.sort(
-        (a: any, b: any) =>
-          CheckRedeemed(b.redeemed_codes) - CheckRedeemed(a.redeemed_codes)
-      ) as ProfileType[];
-    } else {
-      return [] as ProfileType[];
+    if (error) {
+      console.log(error);
+      return [] as TilerProfileType[];
     }
+
+    return res as TilerProfileType[];
   };
 
-  const { data, isLoading, status } = useQuery(["all_users"], fetchAllUsers);
-
-  useEffect(() => {
-    if (!data || data?.length === 0) return;
-
-    if (term) {
-      setUsers(data.filter((u) => u.phone_number.includes(term)));
-    } else {
-      setUsers(
-        data
-          .slice(0, show)
-          .sort(
-            (a, b) =>
-              CheckRedeemed(b.redeemed_codes) - CheckRedeemed(a.redeemed_codes)
-          )
-      );
-    }
-
-    if (filter === "ready to pay") {
-      setUsers(
-        data
-          .filter((user) => CheckRedeemed(user.redeemed_codes) >= 10)
-          .slice(0, show)
-          .sort((a, b) => b.redeemed_codes.length - a.redeemed_codes.length)
-      );
-    } else if (filter === "redeemed codes") {
-      setUsers(
-        data
-          .filter((user) => user.redeemed_codes.length > 0)
-          .slice(0, show)
-          .sort((a, b) => b.redeemed_codes.length - a.redeemed_codes.length)
-      );
-    } else if (filter === "redeemed but not ready to paid") {
-      setUsers(
-        data
-          .filter(
-            (user) =>
-              user.redeemed_codes.length > 0 &&
-              CheckRedeemed(user.redeemed_codes) > 0
-          )
-          .slice(0, show)
-          .sort((a, b) => b.redeemed_codes.length - a.redeemed_codes.length)
-      );
-    }
-  }, [term, show, data, filter]);
+  const { data, isLoading, status } = useQuery(["all_profiles"], fetchAllUsers);
 
   console.log(data);
 
@@ -203,7 +142,7 @@ function TilersPage() {
                 </Select>
               </div>
             </div>
-            <AllTilersTable users={data} />
+            <TilerProfilesTable tilers={data} />
             <div className="flex justify-center w-full mt-10 items-center space-x-6">
               {show === 10 ? (
                 <>

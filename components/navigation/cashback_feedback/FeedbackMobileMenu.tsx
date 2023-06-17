@@ -22,6 +22,7 @@ import {
   FaCartPlus,
   FaChevronCircleDown,
 } from "react-icons/fa";
+import CashbackNavbarChooser from "./CashbackNavbarChooser";
 
 function FeedbackMobileMenu({ logout }: { logout: any }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,45 +50,7 @@ function FeedbackMobileMenu({ logout }: { logout: any }) {
           </DrawerHeader>
 
           <DrawerBody>
-            <div className="flex flex-col space-y-4 mt-5 px-2">
-              <NavbarLink title="Apps" Icon={FaAppStore} href="/" />
-              <NavbarLink
-                title="Dashboard"
-                Icon={AiOutlineDashboard}
-                href="/apps/cashback_feedback"
-              />
-              {/* 
-        <NavbarLink
-          title="New Feedback"
-          Icon={FaPlus}
-          href="/apps/cashback_feedback/new"
-        />
-        <NavbarLink
-          title="Previous Feedback"
-          Icon={TbFileReport}
-          href="/apps/cashback_feedback/previous"
-        /> */}
-
-              {profile?.role === "admin" && (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <h1>Admin</h1>
-                    <FaChevronCircleDown />
-                  </div>
-
-                  {/* <NavbarLink
-              title="All Tilers"
-              Icon={FaUsers}
-              href="/apps/cashback_feedback/tilers"
-            /> */}
-                  <NavbarLink
-                    title="Tiler Transactions"
-                    Icon={FaCartPlus}
-                    href="/apps/cashback_feedback/tilers/transactions"
-                  />
-                </>
-              )}
-            </div>
+            <CashbackNavbarChooser />
           </DrawerBody>
 
           <DrawerFooter>

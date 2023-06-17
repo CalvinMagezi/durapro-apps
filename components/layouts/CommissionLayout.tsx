@@ -48,6 +48,13 @@ function CommissionLayout({ children }: React.PropsWithChildren<{}>) {
     if (!user) {
       setAuthenticated(false);
     }
+
+    if (!user && authenticated === false) {
+      setTimeout(() => {
+        router.push("/");
+        toast.error("Please login to continue", { duration: 3000 });
+      }, 3000);
+    }
   }, [user, authenticated]);
 
   return (

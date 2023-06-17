@@ -96,6 +96,8 @@ function TilerTransactionsTable({
             <Thead>
               <Tr color="gray">
                 <Th>#</Th>
+                <Th>Tiler Contact</Th>
+                <Th>Tiler Name</Th>
                 <Th>City</Th>
                 <Th>Shop Name</Th>
                 <Th>Site Location</Th>
@@ -108,6 +110,14 @@ function TilerTransactionsTable({
               {data?.map((d, index) => (
                 <Tr key={d.id} className="flex-shrink-0">
                   <Td>{index + 1}</Td>
+                  <Td>
+                    <Text>{d.tiler_profile?.phone_number}</Text>
+                  </Td>
+                  <Td>
+                    <Text>
+                      {d.tiler_profile?.first_name} {d.tiler_profile?.last_name}
+                    </Text>
+                  </Td>
                   <Td>
                     <Text>{d.city}</Text>
                   </Td>
