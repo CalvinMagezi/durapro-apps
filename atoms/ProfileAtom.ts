@@ -10,3 +10,8 @@ export const AuthAtom = atom({
   key: "AuthAtom",
   default: false,
 });
+
+export const UserPermissionsState = atom({
+  key: "UserPermissionsState",
+  default: [] as string[],
+});

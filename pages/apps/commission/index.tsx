@@ -2,10 +2,14 @@ import CommissionLayout from "@/components/layouts/CommissionLayout";
 import UserCommissionTable from "@/components/tables/UserCommissionTable";
 import useUser from "@/hooks/useUser";
 import { supabase } from "@/lib/supabaseClient";
+import { queryClient } from "@/pages/_app";
 import { CommissionType } from "@/typings";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, IconButton } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { FaRedoAlt } from "react-icons/fa";
 
 const styles = {
   activeTab: `bg-blue-600 text-white rounded-lg flex-shrink-0  p-3 shadow-lg flex flex-col items-center space-y-4 border border-black cursor-pointer hover:scale-105 transition duration-100 ease-in-out`,
@@ -17,6 +21,38 @@ function CommissionAppPage() {
   const [months, setMonths] = useState<string[]>([]);
   const [currentMonth, setCurrentMonth] = useState<string>("June 2023");
   const [results, setResults] = useState<CommissionType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const refetchScrapper = async () => {
+    setLoading(true);
+    const res = await fetch("/api/scrapper/commission", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        api_key: process.env.NEXT_PUBLIC_WEB_SCRAP_API_KEY,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      toast.success("Successfully fetched commission data", {
+        duration: 5000,
+      });
+      setLoading(false);
+      queryClient.invalidateQueries(["commission"]);
+      return;
+    } else {
+      toast.error("Error fetching commission data", {
+        duration: 5000,
+      });
+      setLoading(false);
+      return;
+    }
+  };
 
   const { data, isLoading, error } = useQuery(
     ["commission"],
@@ -64,13 +100,22 @@ function CommissionAppPage() {
   }, [data, currentMonth]);
 
   // console.log(results);
-  console.log(months);
+  // console.log(months);
 
   return (
     <CommissionLayout>
       <Heading size="lg" className="text-center">
         Showing results for: {currentMonth}
       </Heading>
+      <div className="flex items-center w-full justify-center">
+        <IconButton
+          aria-label="refresh"
+          icon={<FaRedoAlt />}
+          colorScheme="orange"
+          onClick={refetchScrapper}
+          isLoading={loading}
+        />
+      </div>
       <div className="overflow-x-scroll my-10 py-3">
         <div className="flex flex-shrink-0 items-center space-x-4 w-3/4 ">
           {months?.map((month, index) => (

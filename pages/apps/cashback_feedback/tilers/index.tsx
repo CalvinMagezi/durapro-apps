@@ -20,7 +20,8 @@ import React, { useEffect, useState } from "react";
 import { FaArrowDown, FaArrowUp, FaSearch } from "react-icons/fa";
 
 function TilersPage() {
-  const [users, setUsers] = useState<ProfileType[]>([]);
+  const [users, setUsers] = useState<TilerProfileType[]>([]);
+  const [allTrackers, setAllTrackers] = useState<string[]>([]);
   const [show, setShow] = useState(10);
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -79,7 +80,43 @@ function TilersPage() {
 
   const { data, isLoading, status } = useQuery(["all_profiles"], fetchAllUsers);
 
-  console.log(data);
+  // console.log(data);
+
+  useEffect(() => {
+    if (!data) return;
+
+    const trackers = data.map((profile) => profile.tracked_by?.full_name || "");
+
+    const uniqueTrackers = trackers.filter(
+      (tracker, index) => trackers.indexOf(tracker) === index
+    );
+
+    setAllTrackers(uniqueTrackers);
+
+    if (term) {
+      const profiles = data.filter((profile) => {
+        return (
+          profile.phone_number
+            .toLocaleLowerCase()
+            .includes(term.toLocaleLowerCase()) ||
+          profile.first_name
+            .toLocaleLowerCase()
+            .includes(term.toLocaleLowerCase()) ||
+          profile.last_name
+            .toLocaleLowerCase()
+            .includes(term.toLocaleLowerCase())
+        );
+      });
+      setUsers(profiles.slice(0, show));
+    }
+
+    if (filter !== "all") {
+      const profiles = data.filter((profile) => {
+        return profile.tracked_by?.full_name === filter;
+      });
+      setUsers(profiles.slice(0, show));
+    }
+  }, [term, filter, show, data]);
 
   return (
     <FeedbackLayout>
@@ -127,22 +164,22 @@ function TilersPage() {
 
               <div>
                 <Text className="font-light text-center mb-3 text-sm">
-                  Filter users
+                  Filter tracked by
                 </Text>
                 <Select
                   defaultValue={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
                   <option value={"all"}>All</option>
-                  <option value={"ready to pay"}>Ready To Pay</option>
-                  <option value={"redeemed codes"}>Has Redeemed Codes</option>
-                  <option value={"redeemed but not ready to paid"}>
-                    Has redeemed but not ready to pay
-                  </option>
+                  {allTrackers.map((tracker, index) => (
+                    <option key={index} value={tracker}>
+                      {tracker}
+                    </option>
+                  ))}
                 </Select>
               </div>
             </div>
-            <TilerProfilesTable tilers={data} />
+            <TilerProfilesTable tilers={users} />
             <div className="flex justify-center w-full mt-10 items-center space-x-6">
               {show === 10 ? (
                 <>
