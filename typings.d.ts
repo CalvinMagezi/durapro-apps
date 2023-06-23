@@ -10,6 +10,7 @@ export interface ProfileType {
   first_login: boolean;
   redeemed_codes: CashbackCodeType[];
   role_id: string;
+  position: string;
 }
 
 export interface SupplierType {

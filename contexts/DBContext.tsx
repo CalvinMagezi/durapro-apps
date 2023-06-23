@@ -1,7 +1,7 @@
 import { UserPermissionsState } from "@/atoms/ProfileAtom";
 import useUser from "@/hooks/useUser";
 import { supabase } from "@/lib/supabaseClient";
-import { ReactNode, createContext, useContext, useEffect } from "react";
+import { ReactNode, createContext, useContext, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
@@ -20,6 +20,7 @@ type Props = {
 export function DBProvider({ children }: Props) {
   const { profile, setProfile, user, manualFetch } = useUser();
   const [permissions, setPermissions] = useRecoilState(UserPermissionsState);
+  const permissionsFetched = useRef(false);
 
   const fetchUserPermissions = async () => {
     if (!user || !profile) return;
@@ -64,7 +65,9 @@ export function DBProvider({ children }: Props) {
   useEffect(() => {
     if (!profile) return;
     if (permissions && permissions.length > 0) return;
+    if (permissionsFetched.current) return;
     fetchUserPermissions();
+    permissionsFetched.current = true;
   }, [profile, permissions]);
 
   const value = {

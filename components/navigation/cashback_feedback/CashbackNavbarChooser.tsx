@@ -8,9 +8,13 @@ import {
   FaChevronCircleDown,
   FaUsers,
 } from "react-icons/fa";
+import { useDB } from "@/contexts/DBContext";
 
 function CashbackNavbarChooser() {
   const { profile } = useUser();
+  const { permissions } = useDB();
+
+  console.log(permissions);
 
   switch (profile?.role) {
     case "admin":

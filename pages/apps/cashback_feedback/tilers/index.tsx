@@ -1,6 +1,8 @@
 import FeedbackLayout from "@/components/layouts/FeedbackLayout";
+import AssignTilerModal from "@/components/modals/cashback_feedback/AssignTilerModal";
 import AllTilersTable from "@/components/tables/cashback_feedback/AllTilersTable";
 import TilerProfilesTable from "@/components/tables/cashback_feedback/TilerProfilesTable";
+import { useDB } from "@/contexts/DBContext";
 import CheckRedeemed from "@/helpers/CheckRedeemed";
 import { supabase } from "@/lib/supabaseClient";
 import { CashbackCodeType, ProfileType, TilerProfileType } from "@/typings";
@@ -25,6 +27,7 @@ function TilersPage() {
   const [show, setShow] = useState(10);
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const { permissions } = useDB();
 
   function CheckRedeemed(redeemed_codes: CashbackCodeType[]) {
     if (redeemed_codes.length === 0) return 0;
@@ -84,6 +87,7 @@ function TilersPage() {
 
   useEffect(() => {
     if (!data) return;
+    setUsers(data.slice(0, show));
 
     const trackers = data.map((profile) => profile.tracked_by?.full_name || "");
 
@@ -121,6 +125,12 @@ function TilersPage() {
   return (
     <FeedbackLayout>
       <Heading className="text-center">All Tilers:</Heading>
+
+      {permissions?.includes("can_assign_sales_staff") && (
+        <div className="justify-center w-full items-center flex my-5">
+          <AssignTilerModal />
+        </div>
+      )}
 
       <Skeleton
         isLoaded={!isLoading}
