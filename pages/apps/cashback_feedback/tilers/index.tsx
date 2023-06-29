@@ -126,11 +126,9 @@ function TilersPage() {
     <FeedbackLayout>
       <Heading className="text-center">All Tilers:</Heading>
 
-      {permissions?.includes("can_assign_sales_staff") && (
-        <div className="justify-center w-full items-center flex my-5">
-          <AssignTilerModal />
-        </div>
-      )}
+      <div className="justify-center w-full items-center flex my-5">
+        <AssignTilerModal />
+      </div>
 
       <Skeleton
         isLoaded={!isLoading}
