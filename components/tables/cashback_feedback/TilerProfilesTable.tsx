@@ -20,14 +20,37 @@ import Link from "next/link";
 import { GiPayMoney } from "react-icons/gi";
 import CheckRedeemed from "@/helpers/CheckRedeemed";
 import { FaPlus } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import { format } from "date-fns";
+import { SiMicrosoftexcel } from "react-icons/si";
 
 function TilerProfilesTable({ tilers }: { tilers: TilerProfileType[] }) {
   const tableRef = useRef(null);
+
+  const exportToExcel = () => {
+    let table = document.getElementById("all_tilers");
+
+    let wb = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });
+
+    XLSX.writeFile(
+      wb,
+      `tilers-${format(new Date(), "PPpp").replaceAll(" ", "_")}.xlsx`
+    );
+  };
+
+  // console.log(tilers);
   return (
     <Flex flexDir="column">
+      <IconButton
+        aria-label="generate"
+        icon={<SiMicrosoftexcel />}
+        colorScheme="green"
+        onClick={exportToExcel}
+        className="my-2"
+      />
       <Flex overflow="auto">
         <TableContainer>
-          <Table variant="simple" mt={4} ref={tableRef}>
+          <Table variant="simple" mt={4} id="all_tilers" ref={tableRef}>
             <Thead>
               <Tr color="white" bg="red">
                 <Th color="white">Phone Number</Th>

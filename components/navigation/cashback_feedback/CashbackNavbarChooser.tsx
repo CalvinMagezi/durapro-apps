@@ -55,20 +55,21 @@ function CashbackNavbarChooser() {
             Icon={AiOutlineDashboard}
             href="/apps/cashback_feedback"
           />
-          {permissions?.includes("can_assign_sales_staff") && (
-            <>
-              <NavbarLink
-                title="Tiler Profiles"
-                Icon={FaUsers}
-                href="/apps/cashback_feedback/tilers"
-              />
-              <NavbarLink
-                title="Tiler Transactions"
-                Icon={FaCartPlus}
-                href="/apps/cashback_feedback/tilers/transactions"
-              />
-            </>
-          )}
+          {permissions?.includes("can_assign_sales_staff") ||
+            (profile?.email === "hadija.nahara@durapro.co.ug" && (
+              <>
+                <NavbarLink
+                  title="Tiler Profiles"
+                  Icon={FaUsers}
+                  href="/apps/cashback_feedback/tilers"
+                />
+                <NavbarLink
+                  title="Tiler Transactions"
+                  Icon={FaCartPlus}
+                  href="/apps/cashback_feedback/tilers/transactions"
+                />
+              </>
+            ))}
         </div>
       );
       break;
