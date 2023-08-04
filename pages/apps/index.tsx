@@ -38,7 +38,7 @@ function AppsChoicesPage() {
         <Grid className="mt-6 grid-cols-1 items-center gap-8 p-3 md:grid-cols-2">
           {profile?.role === "admin" && (
             <>
-              <GridItem>
+              {/* <GridItem>
                 <Link href="/apps/commission" passHref>
                   <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
                     <h3 className="text-2xl font-bold">
@@ -49,7 +49,7 @@ function AppsChoicesPage() {
                     </p>
                   </div>
                 </Link>
-              </GridItem>
+              </GridItem> */}
               <GridItem>
                 <Link href="/apps/cashback-admin" passHref>
                   <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
