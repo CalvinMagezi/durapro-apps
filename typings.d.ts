@@ -1,5 +1,6 @@
 export interface ProfileType {
   id: string;
+  _id?: string;
   updated_at: string;
   username: string;
   full_name: string;
@@ -143,4 +144,14 @@ export interface TilerTransactionType {
   site_location: string;
   quantity_bought: string;
   comment: string;
+}
+
+export interface CashbackUserType {
+  _id: string;
+  _createdAt: string;
+  first_login: boolean;
+  phone_number: string;
+  role: string;
+  uid: string;
+  redeemed_codes: CashbackCodeType[];
 }

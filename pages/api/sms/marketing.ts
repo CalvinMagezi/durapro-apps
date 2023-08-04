@@ -87,6 +87,8 @@ export default async function handler(
                 console.log(message);
                 failed_dispatches.push(parsed_number);
               });
+            // console.log("Successfully dispatched to " + parsed_number);
+            // successful_dispatches.push(parsed_number);
           } catch (error) {
             console.log(error);
             return res.status(400).json({

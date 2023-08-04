@@ -1,10 +1,22 @@
 import { AuthAtom } from "@/atoms/ProfileAtom";
 import { supabase } from "@/lib/supabaseClient";
-import { Button, Heading, Input, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Heading,
+  Input,
+  Text,
+  Container,
+  Stack,
+  Box,
+  FormControl,
+  FormLabel,
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
+import FormSubmitButton from "../buttons/FormSubmitButton";
 
 type FormValues = {
   full_name: string;
@@ -16,7 +28,7 @@ type FormValues = {
 function AuthenticationForms() {
   const [isRegistration, setIsRegistration] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [authenticated, setAuthenticated] = useRecoilState(AuthAtom);
+  const router = useRouter();
 
   const {
     register,
@@ -25,219 +37,91 @@ function AuthenticationForms() {
   } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
-    if (isRegistration) {
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error) {
+      console.log(error);
+      toast.error(error.message, {
+        duration: 8000,
+      });
+      setLoading(false);
+      setIsRegistration(false);
       return;
-      // if (data.password !== data.confirm_password) {
-      //   toast.error("Passwords do not match ", {
-      //     duration: 8000,
-      //   });
-      //   setLoading(false);
-      //   return;
-      // }
-
-      // //   console.log(data.password);
-
-      // const { data: new_user, error } = await supabase.auth.signUp({
-      //   email: data.email,
-      //   password: data.password,
-      //   options: {
-      //     data: {
-      //       full_name: data.full_name,
-      //     },
-      //   },
-      // });
-
-      // if (error) {
-      //   console.log(error);
-      //   toast.error(error.message, {
-      //     duration: 3000,
-      //   });
-      //   setLoading(false);
-      //   return;
-      // }
-      // toast.success("Successfully registered, please sign in", {
-      //   duration: 3000,
-      // });
-      // setLoading(false);
-      // setIsRegistration(false);
-    } else {
-      //   console.log(data.password);
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
-
-      if (error) {
-        console.log(error);
-        toast.error(error.message, {
-          duration: 8000,
-        });
-        setLoading(false);
-        setIsRegistration(false);
-        return;
-      }
-
-      toast.success("Welcome back", {
-        duration: 3000,
-      });
-      setAuthenticated(true);
     }
+
+    toast.success("Welcome back", {
+      duration: 3000,
+    });
+
+    router.push("/apps");
   };
 
   return (
-    <>
-      {!isRegistration ? (
-        <div>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="border-2 border-gray-500 border-opacity-40 rounded-lg shadow-lg p-5"
-          >
-            <Heading size="md" className="text-center mb-5">
-              Sign In
-            </Heading>
-            <div className="flex flex-col space-y-3">
-              <div>
-                <Text className="font-bold mb-3">Email:</Text>
+    <Container>
+      <Box
+        py={{ base: "0", sm: "8" }}
+        px={{ base: "4", sm: "10" }}
+        bg={{ base: "transparent", sm: "bg.surface" }}
+        boxShadow="md"
+        borderRadius={{ base: "none", sm: "xl" }}
+      >
+        <Stack spacing={{ base: "2", md: "3" }} textAlign="center">
+          <Heading size={{ base: "xs", md: "sm" }}>Sign In</Heading>
+        </Stack>
+        <Stack spacing="6">
+          <Stack spacing="5">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FormControl className={`mb-3`}>
+                <FormLabel htmlFor="email">Email</FormLabel>
                 <Input
-                  borderWidth={1}
-                  border="1px"
+                  id="email"
                   type="email"
+                  borderWidth={1}
+                  placeholder={"example@gmail.com"}
+                  border="1px"
+                  _hover={{ borderColor: "black" }}
                   {...register("email", {
                     required: true,
                   })}
                 />
                 {errors.email && (
-                  <Text className="text-red-500 mt-2 font-light italic text-sm">
+                  <Text className="mt-2 text-sm font-light italic text-red-500">
                     {errors.email.message}
                   </Text>
                 )}
-              </div>
-              <div>
-                <Text className="font-bold mb-3">Password:</Text>
+              </FormControl>
+              <FormControl>
+                <FormLabel htmlFor="password">Password</FormLabel>
                 <Input
+                  id="password"
+                  type="password"
+                  placeholder={"*********"}
                   borderWidth={1}
                   border="1px"
-                  type="password"
+                  _hover={{ borderColor: "black" }}
                   {...register("password", {
                     required: true,
                   })}
                 />
+
                 {errors.password && (
-                  <Text className="text-red-500 mt-2 font-light italic text-sm">
+                  <Text className="mt-2 text-sm font-light italic text-red-500">
                     {errors.password.message}
                   </Text>
                 )}
+              </FormControl>
+              <div className="mt-5 mb-5">
+                <FormSubmitButton loading={loading} text="Sign In" />
               </div>
-              <div className="flex justify-center w-full">
-                <Button colorScheme="green" type="submit" isLoading={loading}>
-                  Sign In
-                </Button>
-              </div>
-              {/* <div className="flex justify-center items-center w-full">
-                <Text
-                  className="text-center text-sm font-semibold cursor-pointer hover:scale-105 transition duration-105 ease-in-out"
-                  onClick={() => setIsRegistration(true)}
-                >
-                  {"Don't"} have an account?{" "}
-                  <span className="text-blue-500">Sign Up</span>
-                </Text>
-              </div> */}
-            </div>
-          </form>
-        </div>
-      ) : (
-        <div>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="border-2 border-gray-500 border-opacity-40 rounded-lg shadow-lg p-5"
-          >
-            <Heading size="md" className="text-center mb-5">
-              Sign Up
-            </Heading>
-            <div className="flex flex-col space-y-3">
-              <div>
-                <Text className="font-bold mb-3">Full Name:</Text>
-                <Input
-                  borderWidth={1}
-                  border="1px"
-                  type="text"
-                  {...register("full_name", {
-                    required: true,
-                  })}
-                />
-                {errors.full_name && (
-                  <Text className="text-red-500 mt-2 font-light italic text-sm">
-                    {errors.full_name.message}
-                  </Text>
-                )}
-              </div>
-              <div>
-                <Text className="font-bold mb-3">Email:</Text>
-                <Input
-                  borderWidth={1}
-                  border="1px"
-                  type="email"
-                  {...register("email", {
-                    required: true,
-                  })}
-                />
-                {errors.email && (
-                  <Text className="text-red-500 mt-2 font-light italic text-sm">
-                    {errors.email.message}
-                  </Text>
-                )}
-              </div>
-              <div>
-                <Text className="font-bold mb-3">Password:</Text>
-                <Input
-                  borderWidth={1}
-                  border="1px"
-                  type="password"
-                  {...register("password", {
-                    required: true,
-                  })}
-                />
-                {errors.password && (
-                  <Text className="text-red-500 mt-2 font-light italic text-sm">
-                    {errors.password.message}
-                  </Text>
-                )}
-              </div>
-              <div>
-                <Text className="font-bold mb-3">Confirm Password:</Text>
-                <Input
-                  borderWidth={1}
-                  border="1px"
-                  type="password"
-                  {...register("confirm_password", {
-                    required: true,
-                  })}
-                />
-                {errors.confirm_password && (
-                  <Text className="text-red-500 mt-2 font-light italic text-sm">
-                    {errors.confirm_password.message}
-                  </Text>
-                )}
-              </div>
-              <div className="flex justify-center w-full">
-                <Button colorScheme="green" type="submit" isLoading={loading}>
-                  Sign Up
-                </Button>
-              </div>
-              <div className="flex justify-center items-center w-full">
-                <Text
-                  className="text-center text-sm font-semibold cursor-pointer hover:scale-105 transition duration-105 ease-in-out"
-                  onClick={() => setIsRegistration(false)}
-                >
-                  Already have an account?{" "}
-                  <span className="text-blue-500">Sign In</span>
-                </Text>
-              </div>
-            </div>
-          </form>
-        </div>
-      )}
-    </>
+            </form>
+          </Stack>
+        </Stack>
+      </Box>
+    </Container>
   );
 }
 
