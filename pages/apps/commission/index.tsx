@@ -1,5 +1,6 @@
 import CommissionLayout from "@/components/layouts/CommissionLayout";
 import UserCommissionTable from "@/components/tables/UserCommissionTable";
+import DefaultDashboardBanner from "@/components/utils/DefaultDashboardBanner";
 import useUser from "@/hooks/useUser";
 import { supabase } from "@/lib/supabaseClient";
 import { queryClient } from "@/pages/_app";
@@ -104,6 +105,7 @@ function CommissionAppPage() {
 
   return (
     <CommissionLayout>
+      <DefaultDashboardBanner title="Staff Commission" />
       <Heading size="lg" className="text-center">
         Showing results for: {currentMonth}
       </Heading>

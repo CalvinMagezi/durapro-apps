@@ -2,6 +2,7 @@ import FeedbackLayout from "@/components/layouts/FeedbackLayout";
 import TrackNewTilerModal from "@/components/modals/cashback_feedback/TrackNewTilerModal";
 import MyTilersTable from "@/components/tables/cashback_feedback/MyTilersTable";
 import TilerTransactionsTable from "@/components/tables/cashback_feedback/TilerTransactionsTable";
+import DefaultDashboardBanner from "@/components/utils/DefaultDashboardBanner";
 import useUser from "@/hooks/useUser";
 import { supabase } from "@/lib/supabaseClient";
 import { TilerProfileType, TilerTransactionType } from "@/typings";
@@ -51,6 +52,7 @@ function CashbackFeedbackPage() {
 
   return (
     <FeedbackLayout>
+      <DefaultDashboardBanner title="Cashback Feedback" />
       {profile?.role === "admin" ? (
         <>
           <div className="flex items-center justify-between w-full">

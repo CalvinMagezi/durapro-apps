@@ -62,6 +62,18 @@ function AppsChoicesPage() {
                   </div>
                 </Link>
               </GridItem>
+              <GridItem>
+                <Link href="/apps/service-tracking" passHref>
+                  <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
+                    <h3 className="text-2xl font-bold">
+                      Servicing Tracking Application &rarr;
+                    </h3>
+                    <p className="mt-4 text-xl">
+                      Access the service tracking application.
+                    </p>
+                  </div>
+                </Link>
+              </GridItem>
             </>
           )}
           <GridItem>

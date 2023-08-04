@@ -29,44 +29,6 @@ function TilersPage() {
   const [filter, setFilter] = useState("all");
   const { permissions } = useDB();
 
-  function CheckRedeemed(redeemed_codes: CashbackCodeType[]) {
-    if (redeemed_codes.length === 0) return 0;
-    let count = 0;
-    redeemed_codes.forEach((code) => {
-      if (code.funds_disbursed === false) {
-        count += 1;
-      }
-    });
-    return count;
-  }
-
-  async function fetchAllRedeemedCodes(
-    lastCodeId: string | null,
-    allRedeemedCodes: CashbackCodeType[] = []
-  ): Promise<CashbackCodeType[]> {
-    const response: any = await supabase
-      .from("cashback_codes")
-      .select("*")
-      .filter("redeemed", "eq", true)
-      .range(0, 1000)
-      .gt("_id", lastCodeId || "");
-
-    const { data, error, count } = response;
-
-    if (error || !data || data.length === 0) {
-      if (error) {
-        console.error("Error fetching codes", error);
-      }
-      return allRedeemedCodes;
-    } else {
-      const lastIdInResponse = data[data.length - 1]._id;
-      return fetchAllRedeemedCodes(lastIdInResponse, [
-        ...allRedeemedCodes,
-        ...data,
-      ]);
-    }
-  }
-
   const fetchAllUsers = async () => {
     const { data: res, error } = await supabase
       .from("tiler_profile")

@@ -155,3 +155,24 @@ export interface CashbackUserType {
   uid: string;
   redeemed_codes: CashbackCodeType[];
 }
+
+export interface EquipmentType {
+  created_at?: string | null;
+  description?: string | null;
+  id?: string;
+  location?: string | null;
+  name?: string | null;
+  service_days?: string | null;
+}
+
+export interface EquipmentPartType {
+  created_at: string | null;
+  description: string | null;
+  id: string;
+  last_serviced: string | null;
+  name: string | null;
+  needs_servicing: boolean | null;
+  next_servicing: string | null;
+  parent: string | null;
+  service_days: string | null;
+}
