@@ -32,8 +32,13 @@ function FeedbackLayout({ children }: React.PropsWithChildren<{}>) {
   ];
 
   useEffect(() => {
-    if (profile?.role === "admin" || profile?.role === "superadmin") {
+    if (
+      profile?.role === "admin" ||
+      profile?.email === "hadija.nahara@durapro.co.ug"
+    ) {
       setAvailableSections(sections);
+    } else {
+      setAvailableSections([sections[0]]);
     }
   }, [profile]);
   return (
