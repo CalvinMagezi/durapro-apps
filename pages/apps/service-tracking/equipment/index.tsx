@@ -36,7 +36,7 @@ function EquipmentPage() {
       </Heading>
 
       <div className="mt-5 flex items-center justify-center">
-        <Link href="/dashboard/equipment/add">
+        <Link href="/apps/service-tracking/equipment/add">
           <Button colorScheme="green" leftIcon={<Plus />}>
             New Equipment
           </Button>
@@ -49,7 +49,7 @@ function EquipmentPage() {
             <ReusableTable
               data={results}
               columns={columns}
-              item_url="/dashboard/equipment"
+              item_url="/apps/service-tracking/equipment"
             />
           ) : (
             <div>No equipment found</div>
