@@ -30,13 +30,14 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import { useDownloadExcel } from "react-export-table-to-excel";
+
 import { SiMicrosoftexcel } from "react-icons/si";
 import { GiPayMoney } from "react-icons/gi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
 import { supabase } from "@/lib/supabaseClient";
 import NotifyUser from "@/helpers/sms/NotifyUser";
+import * as XLSX from "xlsx";
 import { CashbackCodeType, ProfileType } from "@/typings";
 
 type FormValues = {
@@ -59,11 +60,29 @@ function UserCodesTable({
 
   const tableRef = useRef(null);
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableRef.current,
-    filename: `${customer.phone_number} Cashback Codes`,
-    sheet: `${customer.phone_number} Cashback Codes`,
-  });
+  const exportToExcel = () => {
+    const fileName = `${customer.phone_number} Cashback Codes.xlsx`;
+    const sheetName = `${customer.phone_number} Cashback Codes`;
+
+    const worksheet = XLSX.utils.json_to_sheet(
+      codes.map((code) => ({
+        Code: code.code,
+        Status: code.redeemed === true ? "Redeemed" : "Not yet redeemed",
+        "Redeemed On": code.redeemed_on
+          ? format(new Date(code.redeemed_on), "PPp")
+          : "",
+        Paid: code.funds_disbursed ? "Paid" : "Not yet paid",
+        "Receipt #": code.mm_confirmation,
+        "Payment Date": code.disbursed_on
+          ? format(new Date(code.disbursed_on), "PPp")
+          : "",
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    XLSX.writeFile(workbook, fileName);
+  };
 
   const {
     register,
@@ -130,7 +149,7 @@ function UserCodesTable({
           aria-label="generate"
           icon={<SiMicrosoftexcel />}
           colorScheme="green"
-          onClick={onDownload}
+          onClick={exportToExcel}
           className="my-2"
         />
         <Flex overflow="auto">
