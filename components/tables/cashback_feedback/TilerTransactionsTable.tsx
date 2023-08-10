@@ -14,17 +14,33 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
 } from "@chakra-ui/react";
 
 import { format } from "date-fns";
 import Link from "next/link";
-import { FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
-import { useDownloadExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { CashbackCodeType, ProfileType, TilerTransactionType } from "@/typings";
 import { queryClient } from "@/pages/_app";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabaseClient";
+import { updateTilerTransaction } from "@/lib/supabase/updateTilerTransaction";
+import { useRouter } from "next/router";
 
 function TilerTransactionsTable({
   data,
@@ -39,45 +55,65 @@ function TilerTransactionsTable({
 }) {
   const [codeIds, setCodeIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const tableRef = useRef(null);
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableRef.current,
-    filename: "Cashback Codes",
-    sheet: "Cashback Codes",
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TilerTransactionType | null>(null);
+  const [editedTransaction, setEditedTransaction] =
+    useState<TilerTransactionType | null>(null);
+
+  const { mutate: updateTransaction } = useMutation(updateTilerTransaction, {
+    onSuccess: () => {
+      toast.success("Transaction updated successfully", { duration: 3000 });
+      onClose();
+      queryClient.invalidateQueries({ queryKey: ["all_tiler_transactions"] });
+    },
+    onError: () => {
+      toast.error("Failed to update transaction", { duration: 3000 });
+    },
   });
 
-  const deleteCodes = async () => {
-    if (codeIds.length === 0) return;
-    setLoading(true);
-
-    try {
-      toast.loading(`Deleting ${codeIds.length} codes...`);
-      for (let i = 0; i <= codeIds.length; i++) {
-        const element = codeIds[i];
-        await fetch("/api/codes/delete", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            _id: element,
-          }),
-        });
+  const { mutate: deleteTransaction } = useMutation(
+    async (id: string) => {
+      const { error } = await supabase
+        .from("tiler_transaction")
+        .delete()
+        .eq("id", id);
+      if (error) {
+        // throw new Error("Failed to delete transaction");
+        console.log(error);
       }
-      toast.dismiss();
-      toast.success(`Successfully deleted ${codeIds.length} codes.`, {
-        duration: 3000,
-      });
-      setCodeIds([]);
-      queryClient.invalidateQueries();
-    } catch (error) {
-      toast.error("Oops, something went wrong. Please try again", {
-        duration: 3000,
-      });
+    },
+    {
+      onSuccess: () => {
+        toast.success("Transaction deleted successfully", { duration: 3000 });
+        queryClient.invalidateQueries({ queryKey: ["all_tiler_transactions"] });
+      },
+      onError: () => {
+        toast.error("Failed to delete transaction", { duration: 3000 });
+      },
     }
+  );
 
+  const handleEdit = (transaction: TilerTransactionType) => {
+    setSelectedTransaction(transaction);
+    setEditedTransaction({ ...transaction });
+    onOpen();
+  };
+
+  const handleSave = () => {
+    if (!editedTransaction) return;
+    setLoading(true);
+    updateTransaction(editedTransaction);
+    setLoading(false);
+  };
+
+  const handleDelete = (id: string) => {
+    setLoading(true);
+    deleteTransaction(id);
     setLoading(false);
   };
 
@@ -87,7 +123,7 @@ function TilerTransactionsTable({
         aria-label="generate"
         icon={<SiMicrosoftexcel />}
         colorScheme="green"
-        onClick={onDownload}
+        onClick={() => {}}
         className="my-2"
       />
       <Flex overflow="auto">
@@ -103,7 +139,7 @@ function TilerTransactionsTable({
                 <Th>Site Location</Th>
                 <Th>Quantity Bought</Th>
                 {isAdmin && <Th>Person In Charge</Th>}
-                {/* <Th>Action</Th> */}
+                {/* <Th>Actions</Th> */}
               </Tr>
             </Thead>
             <Tbody>
@@ -135,12 +171,118 @@ function TilerTransactionsTable({
                       <Text>{d.tiler_profile?.tracked_by?.email}</Text>
                     </Td>
                   )}
+                  {/* <Td>
+                    <Flex>
+                      <IconButton
+                        aria-label="edit"
+                        icon={<FaEdit size={24} />}
+                        colorScheme="orange"
+                        onClick={() => handleEdit(d)}
+                        mr={2}
+                      />
+                      <IconButton
+                        aria-label="delete"
+                        icon={<FaTrash />}
+                        colorScheme="red"
+                        onClick={() => handleDelete(d.id)}
+                        isLoading={loading}
+                      />
+                    </Flex>
+                  </Td> */}
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </TableContainer>
       </Flex>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Transaction</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>City</FormLabel>
+              <Input
+                value={editedTransaction?.city}
+                onChange={(e) =>
+                  setEditedTransaction((prevState) => {
+                    if (!prevState) {
+                      return null;
+                    }
+                    return {
+                      ...prevState,
+                      city: e.target.value,
+                    };
+                  })
+                }
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Shop Name</FormLabel>
+              <Input
+                value={editedTransaction?.shop_name}
+                onChange={(e) =>
+                  setEditedTransaction((prevState) => {
+                    if (!prevState) {
+                      return null;
+                    }
+                    return {
+                      ...prevState,
+                      shop_name: e.target.value,
+                    };
+                  })
+                }
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Site Location</FormLabel>
+              <Input
+                value={editedTransaction?.site_location}
+                onChange={(e) =>
+                  setEditedTransaction((prevState) => {
+                    if (!prevState) {
+                      return null;
+                    }
+                    return {
+                      ...prevState,
+                      site_location: e.target.value,
+                    };
+                  })
+                }
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Quantity Bought</FormLabel>
+              <Input
+                value={editedTransaction?.quantity_bought.toString()}
+                onChange={(e) =>
+                  setEditedTransaction((prevState) => {
+                    if (!prevState) {
+                      return null;
+                    }
+                    return {
+                      ...prevState,
+                      quantity_bought: e.target.value,
+                    };
+                  })
+                }
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              isLoading={loading}
+              mr={3}
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

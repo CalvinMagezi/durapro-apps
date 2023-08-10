@@ -22,8 +22,12 @@ import {
 import Image from "next/image";
 
 import Link from "next/link";
-import { List, Chats } from "@phosphor-icons/react";
+import { List, Chats, SignOut } from "@phosphor-icons/react";
 import { ColorModeSwitcher } from "../utils/ColorModeSwitcher";
+import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/router";
+import useUser from "@/hooks/useUser";
+import { toast } from "react-hot-toast";
 
 interface Section {
   title: string;
@@ -35,6 +39,8 @@ interface Section {
 
 function PrimaryMobileNavbar({ sections }: { sections: Section[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+  const { setProfile } = useUser();
   return (
     <>
       <IconButton
@@ -132,7 +138,7 @@ function PrimaryMobileNavbar({ sections }: { sections: Section[] }) {
 
           <DrawerFooter color="white" bg="#1c3184">
             <div className="hidden items-center space-x-4 lg:flex ">
-              <Link href="/dashboard/comms">
+              {/* <Link href="/dashboard/comms">
                 <IconButton
                   bg="#ee2f26"
                   color="white"
@@ -140,8 +146,29 @@ function PrimaryMobileNavbar({ sections }: { sections: Section[] }) {
                   icon={<Chats className="text-3xl" />}
                   aria-label="chats"
                 />
-              </Link>
+              </Link> */}
               <ColorModeSwitcher />
+              <IconButton
+                bg="#ee2f26"
+                color="white"
+                className="bg-[#ee2f26] text-white"
+                icon={<SignOut className="text-3xl" />}
+                aria-label="signout"
+                onClick={async () => {
+                  await supabase.auth
+                    .signOut()
+                    .then(() => {
+                      setProfile(null);
+                      router.push("/");
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                      toast.error("Error signing out, please try again", {
+                        duration: 5000,
+                      });
+                    });
+                }}
+              />
             </div>
           </DrawerFooter>
         </DrawerContent>
