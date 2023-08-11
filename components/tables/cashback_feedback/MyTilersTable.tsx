@@ -40,7 +40,7 @@ function MyTilersTable({ tilers }: { tilers: TilerProfileType[] }) {
                 <Tr key={tiler._id} className="text-center">
                   <Td>
                     <Link
-                      href={`/apps/cashback_feedback/tilers/${tiler.phone_number}`}
+                      href={`/apps/cashback_feedback/tilers/${tiler._id}`}
                       className="underline text-blue-500"
                     >
                       {tiler.phone_number}

@@ -43,17 +43,19 @@ type FormValues = {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const phone_number = ctx.params?.phone_number;
+  const id = ctx.params?.id;
 
   const { data, error } = await supabase
     .from("tiler_profile")
     .select("*")
-    .eq("phone_number", phone_number)
+    .eq("_id", id)
     .single();
 
   if (error) {
     console.log(error);
   }
+
+  const phone_number = data?.phone_number;
 
   const { data: user_codes, error: codes_error } = await supabase
     .from("cashback_codes")
@@ -72,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-function SingleTilerPage({
+function SingleTilerByIdPage({
   tiler,
   user_codes,
 }: {
@@ -138,7 +140,7 @@ function SingleTilerPage({
       toast.success("Successfully updated profile", {
         duration: 3000,
       });
-      router.push(`/apps/cashback_feedback/tilers/${tiler.phone_number}`);
+      router.push(`/apps/cashback_feedback/tilers/${tiler._id}`);
     }
 
     setLoading(false);
@@ -283,4 +285,4 @@ function SingleTilerPage({
   );
 }
 
-export default SingleTilerPage;
+export default SingleTilerByIdPage;
