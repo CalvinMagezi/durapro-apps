@@ -41,12 +41,9 @@ function AllTilersTable({ users }: { users: ProfileType[] }) {
               {users?.map((user, index) => (
                 <Tr key={user.id} className="text-center">
                   <Td>
-                    <Link
-                      href={`/apps/cashback_feedback/tilers/${user.phone_number}`}
-                      className="underline text-blue-500"
-                    >
+                    <a href="#" className="underline text-blue-500">
                       {user.phone_number}
-                    </Link>
+                    </a>
                   </Td>
                   <Td
                     className={`${
