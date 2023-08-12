@@ -13,13 +13,18 @@ interface Section {
 interface LayoutProps {
   children: ReactNode;
   sections: Section[];
+  cbfeedback?: boolean;
 }
 
-const PrimaryLayout: React.FC<LayoutProps> = ({ children, sections }) => {
+const PrimaryLayout: React.FC<LayoutProps> = ({
+  children,
+  sections,
+  cbfeedback,
+}) => {
   return (
     <div>
       <div>
-        <PrimaryHeader sections={sections} />
+        <PrimaryHeader sections={sections} cbfeedback={cbfeedback} />
         <div className="flex">
           <div className="hidden lg:block">
             <PrimarySidebar sections={sections} />
