@@ -199,7 +199,7 @@ function AllUsersTable({
     setLoading(false);
   };
 
-  console.log(selectedUsers);
+  // console.log(selectedUsers);
   return (
     <>
       <Flex flexDir="column">

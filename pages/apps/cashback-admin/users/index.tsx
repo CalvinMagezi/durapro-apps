@@ -22,6 +22,7 @@ import CashbackAdminLayout from "@/components/layouts/CashbackAdminLayout";
 import { queryClient } from "@/pages/_app";
 import TableLoading from "@/components/loaders/TableLoading";
 import AllUsersTable from "@/components/tables/cashback_admin/AllUsersTable";
+import { supabase } from "@/lib/supabaseClient";
 
 // export const getStaticProps: GetStaticProps = async (ctx) => {
 //   const { data } = await client.query({
@@ -50,10 +51,55 @@ function UsersPage() {
   const { data, isLoading, refetch, fetchStatus } = useQuery(
     ["all_users"],
     async () => {
-      const { data } = await client.query({
-        query: GetUsersWithCodes,
-      });
-      return data.cashback_usersList as CashbackUserType[];
+      const PAGE_SIZE = 1000;
+      let codes: any[] = [];
+      let page = 1;
+
+      while (true) {
+        const { data: pageData, error } = await supabase
+          .from("cashback_codes")
+          .select("*")
+          .eq("redeemed", true)
+          .eq("funds_disbursed", false)
+          .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+
+        if (error) {
+          throw new Error("Failed to fetch cashback codes");
+        }
+
+        if (pageData.length === 0) {
+          break;
+        }
+
+        codes = [...codes, ...pageData];
+        page++;
+      }
+
+      const usersWithCodes: CashbackUserType[] = codes.reduce(
+        (acc: CashbackUserType[], code: CashbackCodeType) => {
+          const { redeemed_by } = code;
+          if (redeemed_by) {
+            let user = acc.find((u) => u.phone_number === redeemed_by);
+            if (!user) {
+              user = {
+                _id: "",
+                _createdAt: "",
+                first_login: false,
+                phone_number: "",
+                role: "",
+                uid: redeemed_by,
+                redeemed_codes: [],
+              };
+              acc.push(user);
+            }
+            user.redeemed_codes.push(code);
+          }
+          return acc;
+        },
+        []
+      );
+
+      return usersWithCodes;
     }
   );
 
@@ -112,7 +158,7 @@ function UsersPage() {
     }
   }, [term, show, data, filter]);
 
-  console.log(fetchStatus);
+  console.log(data);
 
   return (
     <CashbackAdminLayout>
