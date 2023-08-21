@@ -236,11 +236,11 @@ function AllUsersTable({
                             }
                           }}
                         />
-                        {/* {selectedUsers.length > 0 && (
+                        {selectedUsers.length > 0 && (
                           <ExportAndMarkAsPaidModal
                             selectedUsers={selectedUsers}
                           />
-                        )} */}
+                        )}
                       </div>
                     </Th>
                   )}

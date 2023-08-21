@@ -22,7 +22,7 @@ import * as XLSX from "xlsx";
 
 import { format } from "date-fns";
 import { useRouter } from "next/router";
-import { CashbackUserType } from "@/typings";
+import { CashbackUserType, CashbackUserWithCodesType } from "@/typings";
 import { queryClient } from "@/pages/_app";
 
 type FormValues = {
@@ -32,7 +32,7 @@ type FormValues = {
 function ExportAndMarkAsPaidModal({
   selectedUsers,
 }: {
-  selectedUsers: CashbackUserType[];
+  selectedUsers: CashbackUserWithCodesType[];
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
@@ -58,14 +58,14 @@ function ExportAndMarkAsPaidModal({
           mm_confirmation: momo_number,
           disbursed_on: new Date().toISOString(),
         })
-        .eq("redeemed_by", user.phone_number)
+        .eq("redeemed_by", user.codes[0]?.redeemed_by)
         .eq("funds_disbursed", false);
 
       if (error) {
         toast.error("An error occured");
       } else {
-        toast.success("Codes marked as paid");
-        NotifyUser(user.phone_number);
+        // toast.success("Codes marked as paid");
+        NotifyUser(user.codes[0]?.redeemed_by);
       }
     });
 
@@ -77,10 +77,10 @@ function ExportAndMarkAsPaidModal({
 
         for (let i = 0; i < selectedUsers.length; i++) {
           const element = selectedUsers[i];
-          console.log(element.redeemed_codes);
+          console.log(element.codes);
 
           const ws = XLSX.utils.json_to_sheet(
-            element.redeemed_codes
+            element.codes
               .filter((code) => code.funds_disbursed === false)
               .map((code) => {
                 return {
@@ -93,7 +93,7 @@ function ExportAndMarkAsPaidModal({
               })
           );
 
-          XLSX.utils.book_append_sheet(wb, ws, element.phone_number);
+          XLSX.utils.book_append_sheet(wb, ws, element.codes[0]?.redeemed_by);
         }
 
         XLSX.writeFile(
