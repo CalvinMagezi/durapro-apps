@@ -24,6 +24,11 @@ import TableLoading from "@/components/loaders/TableLoading";
 import AllUsersTable from "@/components/tables/cashback_admin/AllUsersTable";
 import { supabase } from "@/lib/supabaseClient";
 
+interface CashbackUserWithCodesType {
+  codes: CashbackCodeType[];
+  first_time_redeemed: boolean;
+}
+
 // export const getStaticProps: GetStaticProps = async (ctx) => {
 //   const { data } = await client.query({
 //     query: GetUsersWithCodes,
@@ -40,7 +45,7 @@ import { supabase } from "@/lib/supabaseClient";
 // };
 
 function UsersPage() {
-  const [users, setUsers] = useState<CashbackUserType[]>([]);
+  const [users, setUsers] = useState<CashbackUserWithCodesType[]>([]);
   const [show, setShow] = useState(10);
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -51,55 +56,22 @@ function UsersPage() {
   const { data, isLoading, refetch, fetchStatus } = useQuery(
     ["all_users"],
     async () => {
-      const PAGE_SIZE = 1000;
-      let codes: any[] = [];
-      let page = 1;
-
-      while (true) {
-        const { data: pageData, error } = await supabase
-          .from("cashback_codes")
-          .select("*")
-          .eq("redeemed", true)
-          .eq("funds_disbursed", false)
-          .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
-
-        if (error) {
-          throw new Error("Failed to fetch cashback codes");
-        }
-
-        if (pageData.length === 0) {
-          break;
-        }
-
-        codes = [...codes, ...pageData];
-        page++;
-      }
-
-      const usersWithCodes: CashbackUserType[] = codes.reduce(
-        (acc: CashbackUserType[], code: CashbackCodeType) => {
-          const { redeemed_by } = code;
-          if (redeemed_by) {
-            let user = acc.find((u) => u.phone_number === redeemed_by);
-            if (!user) {
-              user = {
-                _id: "",
-                _createdAt: "",
-                first_login: false,
-                phone_number: "",
-                role: "",
-                uid: redeemed_by,
-                redeemed_codes: [],
-              };
-              acc.push(user);
-            }
-            user.redeemed_codes.push(code);
+      const users = await fetch("/api/db/users/users-with-codes")
+        .then(async (response) => {
+          const data = await response.json();
+          // console.log(data);
+          if (data) {
+            return data as CashbackUserWithCodesType[];
+          } else {
+            return [] as CashbackUserWithCodesType[];
           }
-          return acc;
-        },
-        []
-      );
+        })
+        .catch((error) => {
+          console.error(error);
+          return [] as CashbackUserWithCodesType[];
+        });
 
-      return usersWithCodes;
+      return users;
     }
   );
 
@@ -115,50 +87,57 @@ function UsersPage() {
   }
 
   useEffect(() => {
-    if (!data || data?.length === 0) return;
+    if (!data || Object.keys(data).length === 0) return;
+
+    const dataArray = Object.values(data);
 
     if (term) {
-      setUsers(data.filter((u) => u.phone_number.includes(term)));
+      setUsers(
+        dataArray.filter((u) =>
+          u.codes.some((c) => c.redeemed_by.includes(term))
+        )
+      );
     } else {
       setUsers(
-        data
+        dataArray
           .slice(0, show)
-          .sort(
-            (a, b) =>
-              CheckRedeemed(b.redeemed_codes) - CheckRedeemed(a.redeemed_codes)
-          )
+          .sort((a, b) => CheckRedeemed(b.codes) - CheckRedeemed(a.codes))
       );
     }
 
     if (filter === "ready to pay") {
       setUsers(
-        data
-          .filter((user) => CheckRedeemed(user.redeemed_codes) >= 10)
+        dataArray
+          .filter((user) => CheckRedeemed(user.codes) >= 10)
           .slice(0, show)
-          .sort((a, b) => b.redeemed_codes.length - a.redeemed_codes.length)
+          .sort((a, b) => b.codes.length - a.codes.length)
       );
     } else if (filter === "redeemed codes") {
       setUsers(
-        data
-          .filter((user) => user.redeemed_codes.length > 0)
+        dataArray
+          .filter((user) => user.codes.length > 0)
           .slice(0, show)
-          .sort((a, b) => b.redeemed_codes.length - a.redeemed_codes.length)
+          .sort((a, b) => b.codes.length - a.codes.length)
       );
     } else if (filter === "redeemed but not ready to paid") {
       setUsers(
-        data
+        dataArray
           .filter(
-            (user) =>
-              user.redeemed_codes.length > 0 &&
-              CheckRedeemed(user.redeemed_codes) > 0
+            (user) => user.codes.length > 0 && CheckRedeemed(user.codes) > 0
           )
           .slice(0, show)
-          .sort((a, b) => b.redeemed_codes.length - a.redeemed_codes.length)
+          .sort((a, b) => b.codes.length - a.codes.length)
+      );
+    } else {
+      setUsers(
+        dataArray
+          .slice(0, show)
+          .sort((a, b) => CheckRedeemed(b.codes) - CheckRedeemed(a.codes))
       );
     }
   }, [term, show, data, filter]);
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <CashbackAdminLayout>

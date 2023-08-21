@@ -37,7 +37,7 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
     }
   }, [profile]);
   return (
-    <PrimaryLayout sections={availableSections}>
+    <PrimaryLayout sections={availableSections} cbfeedback={true}>
       <div className="w-full p-3 flex-grow h-screen">{children}</div>
     </PrimaryLayout>
   );

@@ -34,7 +34,11 @@ import { SiMicrosoftexcel } from "react-icons/si";
 import NotifyUser from "@/helpers/sms/NotifyUser";
 import * as XLSX from "xlsx";
 import { useRouter } from "next/router";
-import { CashbackCodeType, CashbackUserType } from "@/typings";
+import {
+  CashbackCodeType,
+  CashbackUserType,
+  CashbackUserWithCodesType,
+} from "@/typings";
 import { queryClient } from "@/pages/_app";
 import ExportAndMarkAsPaidModal from "@/components/modals/cashback_admin/ExportAndMarkAsPaidModal";
 
@@ -46,15 +50,18 @@ function AllUsersTable({
   users,
   filter,
 }: {
-  users: CashbackUserType[];
+  users: CashbackUserWithCodesType[];
   filter: string;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [currentUser, setCurrentUser] = useState<null | CashbackUserType>(null);
+  const [currentUser, setCurrentUser] =
+    useState<null | CashbackUserWithCodesType>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [selectedIds, setSetselectedIds] = useState<any[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<CashbackUserType[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<
+    CashbackUserWithCodesType[]
+  >([]);
   // console.log(users);
 
   const tableRef = useRef(null);
@@ -73,12 +80,12 @@ function AllUsersTable({
     if (filter === "ready to pay") {
       for (let i = 0; i < users.length; i++) {
         const element = users[i];
-        console.log(element.redeemed_codes);
+        console.log(element.codes);
 
         //Sort by whether codes funds have been disbursed
 
         const ws = XLSX.utils.json_to_sheet(
-          element.redeemed_codes
+          element.codes
             .filter((code) => code.funds_disbursed === false)
             .map((code) => {
               return {
@@ -103,7 +110,7 @@ function AllUsersTable({
         //   })
         // );
 
-        XLSX.utils.book_append_sheet(wb, ws, element.phone_number);
+        XLSX.utils.book_append_sheet(wb, ws, element.codes[0].redeemed_by);
       }
     }
 
@@ -135,7 +142,7 @@ function AllUsersTable({
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (currentUser?.redeemed_codes.length === 0) {
+    if (currentUser?.codes?.length === 0) {
       toast.error("This user has not redeemed any codes yet", {
         duration: 3000,
       });
@@ -150,7 +157,7 @@ function AllUsersTable({
         mm_confirmation: data.momo_number,
         disbursed_on: new Date().toISOString(),
       })
-      .eq("redeemed_by", currentUser?.phone_number)
+      .eq("redeemed_by", currentUser?.codes[0]?.redeemed_by)
       .eq("funds_disbursed", false);
 
     if (error) {
@@ -164,7 +171,7 @@ function AllUsersTable({
       });
       queryClient.invalidateQueries({ queryKey: ["all_users"] });
 
-      await NotifyUser(currentUser?.phone_number!).then((res) => {
+      await NotifyUser(currentUser?.codes[0]?.redeemed_by!).then((res) => {
         if (res.success) {
           toast.success("SMS sent to user", {
             duration: 3000,
@@ -200,6 +207,7 @@ function AllUsersTable({
   };
 
   // console.log(selectedUsers);
+  console.log(users);
   return (
     <>
       <Flex flexDir="column">
@@ -228,11 +236,11 @@ function AllUsersTable({
                             }
                           }}
                         />
-                        {selectedUsers.length > 0 && (
+                        {/* {selectedUsers.length > 0 && (
                           <ExportAndMarkAsPaidModal
                             selectedUsers={selectedUsers}
                           />
-                        )}
+                        )} */}
                       </div>
                     </Th>
                   )}
@@ -243,13 +251,13 @@ function AllUsersTable({
                 </Tr>
               </Thead>
               <Tbody>
-                {users?.map((user, index) => (
-                  <Tr key={user._id}>
+                {Object.entries(users).map(([phoneNumber, user]) => (
+                  <Tr key={phoneNumber}>
                     {filter === "ready to pay" && (
                       <Td>
                         <Checkbox
                           isChecked={selectedUsers.some(
-                            (u) => u._id === user._id
+                            (u) => phoneNumber === phoneNumber
                           )}
                           colorScheme="green"
                           onChange={(e) => {
@@ -257,7 +265,9 @@ function AllUsersTable({
                               setSelectedUsers([...selectedUsers, user]);
                             } else {
                               setSelectedUsers(
-                                selectedUsers.filter((u) => u._id !== user._id)
+                                selectedUsers.filter(
+                                  (u) => phoneNumber !== phoneNumber
+                                )
                               );
                             }
                           }}
@@ -266,21 +276,21 @@ function AllUsersTable({
                     )}
                     <Td>
                       <Link
-                        href={`/apps/cashback-admin/users/${user._id}`}
+                        href={`/apps/cashback-admin/users/${user.codes[0]?.redeemed_by}`}
                         className="underline text-blue-500"
                       >
-                        {user.phone_number}
+                        {user.codes[0]?.redeemed_by}
                       </Link>
                     </Td>
                     <Td
                       className={`${
-                        CheckRedeemed(user.redeemed_codes) >= 10 &&
+                        CheckRedeemed(user.codes) >= 10 &&
                         "text-green-500 font-bold"
                       }`}
                     >
-                      {CheckRedeemed(user.redeemed_codes)}
+                      {CheckRedeemed(user.codes)}
                     </Td>
-                    <Td>{user.redeemed_codes.length}</Td>
+                    <Td>{user.codes.length}</Td>
                     <Td>
                       <IconButton
                         aria-label="Pay"
@@ -304,7 +314,7 @@ function AllUsersTable({
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Confirm Payment To {currentUser?.phone_number}
+            Confirm Payment To {currentUser?.codes[0]?.redeemed_by}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>

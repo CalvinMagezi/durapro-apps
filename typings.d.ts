@@ -107,6 +107,15 @@ export interface CashbackCodeType {
   mm_confirmation: string;
 }
 
+interface CashbackUserWithCodesType {
+  codes: CashbackCodeType[];
+  first_time_redeemed: boolean;
+}
+
+interface CashbackUsersWithCodesType {
+  [phone_number: string]: CashbackUserWithCodesType;
+}
+
 export interface TilerProfileType {
   _id: string;
   createdAt: string;

@@ -17,20 +17,18 @@ function SingleUserPage() {
   const id = router.query.id as string;
 
   const fetchCustomer = async () => {
-    const query = `*[_type == "users" && _id == "${id}"]{
-        _id,
-        _createdAt,  
-        phone_number,        
-        }`;
-
-    const response = await sanityClient.fetch(query);
+    const { data: response, error: fetchError } = await supabase
+      .from("cashback_users")
+      .select("*")
+      .eq("phone_number", id)
+      .single();
 
     const { data } = await supabase
       .from("cashback_codes")
       .select("*")
-      .eq("redeemed_by", response[0].phone_number);
+      .eq("redeemed_by", response?.phone_number);
 
-    const user_with_codes = { ...response[0], redeemed_codes: data };
+    const user_with_codes = { ...response, redeemed_codes: data };
 
     return user_with_codes as ProfileType;
   };
