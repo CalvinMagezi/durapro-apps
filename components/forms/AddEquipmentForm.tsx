@@ -37,7 +37,7 @@ function AddEquipmentForm() {
       toast.success("Equipment added successfully", {
         duration: 4000,
       });
-      router.push("/dashboard/equipment/add");
+      router.push("/apps/service-tracking/equipment");
     }
 
     setLoading(false);

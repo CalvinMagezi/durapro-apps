@@ -10,11 +10,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FaArrowDown, FaArrowUp, FaRedo, FaSearch } from "react-icons/fa";
-
-import { GetServerSideProps } from "next";
-import { GetUsersWithCodes } from "@/lib/graphql/queries";
-import client from "@/lib/graphql/apollo-client";
-import { GetStaticProps } from "next";
 import { toast } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { CashbackCodeType, CashbackUserType } from "@/typings";
@@ -28,21 +23,6 @@ interface CashbackUserWithCodesType {
   codes: CashbackCodeType[];
   first_time_redeemed: boolean;
 }
-
-// export const getStaticProps: GetStaticProps = async (ctx) => {
-//   const { data } = await client.query({
-//     query: GetUsersWithCodes,
-//   });
-
-//   const d = data.cashback_usersList;
-
-//   return {
-//     props: {
-//       d,
-//     },
-//     revalidate: 10,
-//   };
-// };
 
 function UsersPage() {
   const [users, setUsers] = useState<CashbackUserWithCodesType[]>([]);
@@ -235,37 +215,6 @@ function UsersPage() {
               <Skeleton isLoaded={!isLoading} height="5rem">
                 <AllUsersTable users={users} filter={filter} />
               </Skeleton>
-              {/* <div className="flex justify-center w-full mt-10 items-center space-x-6">
-              {show === 10 ? (
-                <>
-                  <IconButton
-                    aria-label="more"
-                    icon={<FaArrowDown />}
-                    colorScheme="green"
-                    onClick={() => setShow(show + 10)}
-                  />
-                </>
-              ) : (
-                <>
-                  <IconButton
-                    aria-label="more"
-                    icon={<FaArrowDown />}
-                    colorScheme="green"
-                    onClick={() => setShow(show + 10)}
-                  />
-                  <IconButton
-                    aria-label="more"
-                    icon={<FaArrowUp />}
-                    colorScheme="orange"
-                    onClick={() => {
-                      if (show !== 10) {
-                        setShow(show - 10);
-                      }
-                    }}
-                  />
-                </>
-              )}
-            </div> */}
             </>
           )}
         </div>

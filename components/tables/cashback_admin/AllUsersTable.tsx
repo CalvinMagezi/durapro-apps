@@ -290,7 +290,7 @@ function AllUsersTable({
                     >
                       {CheckRedeemed(user.codes)}
                     </Td>
-                    <Td>{user.codes.length}</Td>
+                    <Td>{user.codes?.length}</Td>
                     <Td>
                       <IconButton
                         aria-label="Pay"

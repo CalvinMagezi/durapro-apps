@@ -50,6 +50,7 @@ function EquipmentPage() {
               data={results}
               columns={columns}
               item_url="/apps/service-tracking/equipment"
+              delete_table="equipment"
             />
           ) : (
             <div>No equipment found</div>
