@@ -73,6 +73,24 @@ function AssignTilerModal() {
         .update({ tracked_by: selectedStaff })
         .eq("_id", tiler);
 
+      const staff_member_email = data?.staff?.find(
+        (st) => st.id === selectedStaff
+      )?.email;
+      const tiler_phone_number = data?.tilers?.find(
+        (tiler) => tiler._id === tiler
+      )?.phone_number;
+
+      await fetch("/api/mail/notify-assignment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: staff_member_email,
+          phone_number: tiler_phone_number,
+        }),
+      });
+
       if (error) {
         errors.push(error);
       }
