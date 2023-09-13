@@ -61,10 +61,7 @@ function AddEquipmentForm() {
           <label htmlFor="service_day" className="text-lg font-semibold">
             Service Days:
           </label>
-          <Input
-            {...register("service_days")}
-            placeholder="Eg. Old grout machine reducer"
-          />
+          <Input {...register("service_days")} placeholder="Eg. 100 days" />
         </div>
         <div>
           <label htmlFor="description" className="text-lg font-semibold">

@@ -30,7 +30,7 @@ function AddPartModal({ item }: { item: EquipmentType }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit } = useForm<FormValues>();
+  const { register, handleSubmit, reset } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
 
@@ -51,6 +51,7 @@ function AddPartModal({ item }: { item: EquipmentType }) {
         duration: 4000,
       });
       queryClient.invalidateQueries(["equipment_parts"]);
+      reset();
       onClose();
     }
 

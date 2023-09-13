@@ -37,7 +37,7 @@ type FormValues = {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const id = ctx.params?.id;
+  const id = ctx.query?.id;
   const { data } = await supabase
     .from("equipment")
     .select("*")
@@ -77,7 +77,7 @@ function IndividualEquipment({ data }: { data: EquipmentType }) {
       toast.success("Equipment updated successfully", {
         duration: 4000,
       });
-      router.push(`/dashboard/equipment/${router.query.id}`);
+      router.push(`/apps/service-tracking/equipment/${router.query.id}`);
     }
 
     setLoading(false);
@@ -196,7 +196,7 @@ function IndividualEquipment({ data }: { data: EquipmentType }) {
                   <Input
                     {...register("service_days")}
                     defaultValue={data?.service_days ? data.service_days : ""}
-                    placeholder="Eg. Old grout machine reducer"
+                    placeholder="Eg. 180 days"
                   />
                 </div>
                 <div>
