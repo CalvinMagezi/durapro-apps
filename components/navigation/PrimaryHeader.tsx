@@ -45,7 +45,7 @@ function PrimaryHeader({
   cbfeedback?: boolean;
 }) {
   const router = useRouter();
-  const { setProfile } = useUser();
+  const { profile, setProfile } = useUser();
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -114,10 +114,10 @@ function PrimaryHeader({
           <div className="hidden items-center space-x-3 lg:flex">
             <Avatar
               src={avatar ? avatar : ""}
-              name={username ? username : "user"}
+              name={profile?.full_name ? profile?.full_name : "user"}
             />
             <p className="text-lg font-semibold text-white">
-              {username ? username : "User"}
+              {profile?.full_name ? profile?.full_name : "User"}
             </p>
           </div>
         </div>

@@ -117,7 +117,7 @@ function UsersPage() {
     }
   }, [term, show, data, filter]);
 
-  // console.log(data);
+  console.log(data);
 
   return (
     <CashbackAdminLayout>

@@ -172,6 +172,10 @@ export interface EquipmentType {
   location?: string | null;
   name?: string | null;
   service_days?: string | null;
+  image_url?: string | null;
+  start_track_time?: string | null;
+  next_service_time?: string | null;
+  needs_servicing?: boolean | null;
 }
 
 export interface EquipmentPartType {

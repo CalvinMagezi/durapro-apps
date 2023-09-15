@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Button, Heading, Skeleton } from "@chakra-ui/react";
+import { Button, Grid, GridItem, Heading, Skeleton } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 
@@ -8,6 +8,8 @@ import { Plus } from "@phosphor-icons/react";
 import Link from "next/link";
 import ServiceTrackingLayout from "@/components/layouts/ServiceTrackingLayout";
 import ReusableTable from "@/components/tables/ReusableTable";
+import { EquipmentType } from "@/typings";
+import EquipmentCard from "@/components/service-tracking/EquipmentCard";
 
 function EquipmentPage() {
   const [results, setResults] = useState<any[]>([]);
@@ -45,7 +47,17 @@ function EquipmentPage() {
 
       <div className="mx-auto mt-10 px-5 ">
         <Skeleton isLoaded={!isLoading}>
-          {results.length > 0 ? (
+          <Grid className="grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-center">
+            {results.length <= 0 && (
+              <div className="text-center">No equipment found</div>
+            )}
+            {results?.map((equipment: EquipmentType) => (
+              <GridItem key={equipment.id}>
+                <EquipmentCard equipment={equipment} />
+              </GridItem>
+            ))}
+          </Grid>
+          {/* {results.length > 0 ? (
             <ReusableTable
               data={results}
               columns={columns}
@@ -54,7 +66,7 @@ function EquipmentPage() {
             />
           ) : (
             <div>No equipment found</div>
-          )}
+          )} */}
         </Skeleton>
       </div>
     </ServiceTrackingLayout>

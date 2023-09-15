@@ -12,6 +12,10 @@ interface Section {
 function ServiceTrackingLayout({ children }: React.PropsWithChildren<{}>) {
   const sections: Section[] = [
     {
+      title: "Dashboard",
+      links: [{ title: "Calendar", href: "/apps/service-tracking" }],
+    },
+    {
       title: "Equipment",
       links: [
         { title: "All", href: "/apps/service-tracking/equipment" },

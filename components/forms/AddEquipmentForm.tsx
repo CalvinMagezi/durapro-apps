@@ -1,5 +1,11 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Button, Input, Textarea } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Textarea,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -22,7 +28,7 @@ function AddEquipmentForm() {
     const { error } = await supabase.from("equipment").insert([
       {
         name: data.name,
-        service_days: data.service_days,
+        service_days: `${data.service_days} hours`,
         description: data.description,
         location: data.location,
       },
@@ -59,9 +65,16 @@ function AddEquipmentForm() {
         </div>
         <div>
           <label htmlFor="service_day" className="text-lg font-semibold">
-            Service Days:
+            Hours between servicing
           </label>
-          <Input {...register("service_days")} placeholder="Eg. 100 days" />
+          <InputGroup>
+            <Input
+              type="number"
+              {...register("service_days")}
+              placeholder="Eg. 100 "
+            />
+            <InputRightAddon>hours</InputRightAddon>
+          </InputGroup>
         </div>
         <div>
           <label htmlFor="description" className="text-lg font-semibold">
