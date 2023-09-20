@@ -26,7 +26,7 @@ function SingleUserPage() {
     const { data } = await supabase
       .from("cashback_codes")
       .select("*")
-      .eq("redeemed_by", response?.phone_number);
+      .eq("redeemed_by", id);
 
     const user_with_codes = { ...response, redeemed_codes: data };
 
