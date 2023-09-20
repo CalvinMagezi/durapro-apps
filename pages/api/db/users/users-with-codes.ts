@@ -68,3 +68,10 @@ export default async function handler(
     res.status(500).json({ message: "An error occurred. Please try again." });
   }
 }
+
+export const config = {
+  api: {
+    responseLimit: false,
+    // responseLimit: '8mb',
+  },
+};
