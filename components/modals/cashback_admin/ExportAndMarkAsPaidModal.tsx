@@ -58,8 +58,7 @@ function ExportAndMarkAsPaidModal({
           mm_confirmation: momo_number,
           disbursed_on: new Date().toISOString(),
         })
-        .eq("redeemed_by", user.codes[0]?.redeemed_by)
-        .eq("funds_disbursed", false);
+        .eq("redeemed_by", user.codes[0]?.redeemed_by);
 
       if (error) {
         toast.error("An error occured");

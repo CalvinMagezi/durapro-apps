@@ -157,8 +157,7 @@ function AllUsersTable({
         mm_confirmation: data.momo_number,
         disbursed_on: new Date().toISOString(),
       })
-      .eq("redeemed_by", currentUser?.codes[0]?.redeemed_by)
-      .eq("funds_disbursed", false);
+      .eq("redeemed_by", currentUser?.codes[0]?.redeemed_by);
 
     if (error) {
       console.log(error);

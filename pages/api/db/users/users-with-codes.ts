@@ -17,7 +17,6 @@ export default async function handler(
         .from("cashback_codes")
         .select("*")
         .eq("redeemed", true)
-        .eq("funds_disbursed", false)
         .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
 
       if (error) {
