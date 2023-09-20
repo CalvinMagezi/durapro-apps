@@ -27,6 +27,10 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
           title: "All Users",
           href: "/apps/cashback-admin/users",
         },
+        {
+          title: "Ready to pay",
+          href: "/apps/cashback-admin/users/ready-to-pay",
+        },
       ],
     },
   ];
