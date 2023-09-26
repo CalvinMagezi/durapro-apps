@@ -67,7 +67,7 @@ export default async function handler(
         .from("cashback_codes")
         .select("*")
         .limit(1)
-        .eq("code", Number(code));
+        .eq("code", code);
 
       if (error) {
         response = `END Please ensure you've entered a valid code.`;
@@ -85,7 +85,7 @@ export default async function handler(
               redeemed: true,
               redeemed_on: new Date().toISOString(),
             })
-            .eq("code", Number(code));
+            .eq("code", code);
 
           const { data: codes } = await supabase
             .from("cashback_codes")
