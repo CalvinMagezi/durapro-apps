@@ -87,7 +87,7 @@ function ReadyToPayPage() {
   return (
     <CashbackAdminLayout>
       <div className="justify-center text-center">
-        <Heading className="text-center">View All Users</Heading>
+        <Heading className="text-center">Users Ready To Be Paid</Heading>
         <IconButton
           aria-label="Refresh"
           icon={<FaRedo />}

@@ -287,7 +287,8 @@ function AllUsersTable({
                         "text-green-500 font-bold"
                       }`}
                     >
-                      {CheckRedeemed(user.codes)}
+                      {CheckRedeemed(user.codes)}{" "}
+                      {`(Ugx ${CheckRedeemed(user.codes) * 500})`}
                     </Td>
                     <Td>{user.codes?.length}</Td>
                     <Td>
