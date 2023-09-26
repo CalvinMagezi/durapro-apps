@@ -6,11 +6,12 @@ import { SignOut } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 function AppsChoicesPage() {
   const { user, manualFetch, setProfile, profile } = useUser();
+  const [hasAccess, setHasAccess] = useState(false);
   const router = useRouter();
 
   const logout = async () => {
@@ -28,6 +29,21 @@ function AppsChoicesPage() {
         });
       });
   };
+
+  useEffect(() => {
+    if (!profile) return;
+
+    const allowedEmails = [
+      "molly.ngute@tilemarket.co.ug",
+      "daniel.musinguzi@durapro.co.ug",
+      "bob.kugonza@durapro.co.ug",
+      "gregmagezi@gmail.com",
+    ];
+
+    if (profile.role === "admin" || allowedEmails.includes(profile.email)) {
+      setHasAccess(true);
+    }
+  }, [profile]);
   return (
     <div className="mx-auto flex h-full min-h-screen max-w-6xl flex-col justify-between p-5">
       <main className="flex w-full flex-1 flex-col items-center justify-center text-center lg:px-20">
@@ -62,18 +78,20 @@ function AppsChoicesPage() {
                   </div>
                 </Link>
               </GridItem>
-              <GridItem>
-                <Link href="/apps/service-tracking" passHref>
-                  <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
-                    <h3 className="text-2xl font-bold">
-                      Servicing Tracking Application &rarr;
-                    </h3>
-                    <p className="mt-4 text-xl">
-                      Access the service tracking application.
-                    </p>
-                  </div>
-                </Link>
-              </GridItem>
+              {hasAccess && (
+                <GridItem>
+                  <Link href="/apps/service-tracking" passHref>
+                    <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
+                      <h3 className="text-2xl font-bold">
+                        Servicing Tracking Application &rarr;
+                      </h3>
+                      <p className="mt-4 text-xl">
+                        Access the service tracking application.
+                      </p>
+                    </div>
+                  </Link>
+                </GridItem>
+              )}
             </>
           )}
           <GridItem>
