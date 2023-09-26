@@ -18,6 +18,7 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
     {
       title: "Admin",
       links: [
+        { title: "Statistics", href: "/apps/cashback-admin" },
         { title: "All Codes", href: "/apps/cashback-admin/codes" },
         {
           title: "Generate Codes",

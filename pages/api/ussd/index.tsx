@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import generateUniqueId from "@/helpers/generateUniqueId";
 import { mailOptions, transporter } from "@/lib/nodemailer";
-import sanityClient from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabaseClient";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -20,26 +19,21 @@ export default async function handler(
       //================================================================
 
       try {
-        const q = `*[_type == "users" && phone_number == "${phoneNumber}"][0]`;
-        const user = await sanityClient.fetch(q);
-        // console.log(user);
+        const { data: user, error: userFetchError } = await supabase
+          .from("cashback_users")
+          .select("*")
+          .eq("phone_number", phoneNumber);
 
-        if (!user) {
-          const doc = {
+        if (userFetchError) {
+          console.log(userFetchError);
+        }
+
+        if (user?.length === 0) {
+          await supabase.from("cashback_users").insert({
             _id: generateUniqueId(),
-            _type: "users",
             phone_number: phoneNumber,
             role: "user",
             first_login: false,
-          };
-
-          await sanityClient.createIfNotExists(doc).then(async () => {
-            await supabase.from("cashback_users").insert({
-              _id: doc._id,
-              phone_number: doc.phone_number,
-              role: doc.role,
-              first_login: doc.first_login,
-            });
           });
         }
 
