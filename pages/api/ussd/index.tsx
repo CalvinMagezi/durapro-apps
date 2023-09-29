@@ -11,8 +11,6 @@ export default async function handler(
   if (req.method === "POST") {
     const { sessionId, serviceCode, phoneNumber, text } = req.body;
 
-    const { data: banList } = await supabase.from("ban_list").select("*");
-
     let response = "";
 
     try {
@@ -20,6 +18,8 @@ export default async function handler(
         //================================================================
         //Opening Screen
         //================================================================
+
+        const { data: banList } = await supabase.from("ban_list").select("*");
 
         if (banList && banList.length > 0) {
           if (
