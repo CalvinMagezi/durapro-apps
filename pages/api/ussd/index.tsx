@@ -15,21 +15,22 @@ export default async function handler(
 
     let response = "";
 
-    if (text == "") {
-      //================================================================
-      //Opening Screen
-      //================================================================
+    try {
+      if (text == "") {
+        //================================================================
+        //Opening Screen
+        //================================================================
 
-      if (banList && banList.length > 0) {
-        if (
-          banList?.filter((ban) => ban?.phone_number == phoneNumber).length > 0
-        ) {
-          response = `END You have been banned from using this service. Please contact support for assistance.`;
-          return res.send(response);
+        if (banList && banList.length > 0) {
+          if (
+            banList?.filter((ban) => ban?.phone_number == phoneNumber).length >
+            0
+          ) {
+            response = `END You have been banned from using this service. Please contact support for assistance.`;
+            return res.send(response);
+          }
         }
-      }
 
-      try {
         const { data: user, error: userFetchError } = await supabase
           .from("cashback_users")
           .select("*")
@@ -49,44 +50,22 @@ export default async function handler(
         }
 
         response = `CON Welcome to Quickset Cashback \n
-        1. Redeem A New Code
-        2. My Redeemed Codes`;
-      } catch (error) {
-        console.log(error);
-        response = `CON Welcome to Quickset Cashback \n
-      1. Redeem A New Code
-      2. My Redeemed Codes`;
-      }
-    } else if (text == "1") {
-      //================================================================
-      //Prompt To Enter Code To Be Redeemed
-      //================================================================
-      response = `CON Please Enter The Code Below`;
-    } else if (text.slice(0, 2) == `1*`) {
-      //================================================================
-      //Logic to redeem a code
-      //================================================================
-      const code = text.split("*")[1];
-
-      const { data, error } = await supabase
-        .from("cashback_codes")
-        .select("*")
-        .limit(1)
-        .eq("code", code);
-
-      if (error) {
-        response = `END Please ensure you've entered a valid code.`;
-      }
-      if (data?.length === 0) {
-        response = `END Please ensure you've entered a valid code.`;
+        Please Enter The Code Below:`;
       } else {
-        if (data && data[0].redeemed === true) {
-          const { data: user, error: userFetchError } = await supabase
-            .from("cashback_users")
-            .select("*")
-            .eq("phone_number", phoneNumber)
-            .single();
+        const code = text;
+        const { data: user, error: userFetchError } = await supabase
+          .from("cashback_users")
+          .select("*")
+          .eq("phone_number", phoneNumber)
+          .single();
 
+        const { data, error } = await supabase
+          .from("cashback_codes")
+          .select("*")
+          .limit(1)
+          .eq("code", code);
+
+        if (data?.length === 0 || error) {
           await supabase
             .from("cashback_users")
             .update({
@@ -102,69 +81,71 @@ export default async function handler(
 
             response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance or access the platform from the website.`;
           } else {
-            response = `END This code has already been redeemed. You have ${
+            response = `END Please ensure you've entered a valid code. You have ${
               5 - user?.wrong_code_count
-            } attempts left.`;
+            } invalid attempts left.`;
           }
         } else {
-          const { error } = await supabase
-            .from("cashback_codes")
-            .update({
-              redeemed_by: `${phoneNumber}`,
-              redeemed: true,
-              redeemed_on: new Date().toISOString(),
-            })
-            .eq("code", code);
+          if (data && data[0].redeemed === true) {
+            await supabase
+              .from("cashback_users")
+              .update({
+                wrong_code_count: user?.wrong_code_count + 1,
+              })
+              .eq("phone_number", phoneNumber);
 
-          const { data: codes } = await supabase
-            .from("cashback_codes")
-            .select("*")
-            .eq("redeemed_by", `${phoneNumber}`);
+            if (user?.wrong_code_count >= 5) {
+              await supabase.from("ban_list").insert({
+                phone_number: phoneNumber,
+                reason: "Too many wrong code attempts from ussd.",
+              });
 
-          if (
-            codes &&
-            codes.filter((code) => code.funds_disbursed == false).length > 10
-          ) {
-            await transporter.sendMail({
-              ...mailOptions,
-              subject: `User ${phoneNumber} is ready to be paid`,
-              text: `User ${phoneNumber} is ready to be paid`,
-              html: `<h1>User ready to be paid</h1><p>The user with phone number: ${phoneNumber} has redeemed more than 10 codes that haven't been paid for.</p>`,
-            });
-          }
-
-          if (error) {
-            response = `END Oops, something went wrong. Please try again`;
+              response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance or access the platform from the website.`;
+            } else {
+              response = `END This code has already been redeemed. You have ${
+                5 - user?.wrong_code_count
+              } attempts left.`;
+            }
           } else {
-            response = `END Successfully redeemed code ${code}`;
+            const { error } = await supabase
+              .from("cashback_codes")
+              .update({
+                redeemed_by: `${phoneNumber}`,
+                redeemed: true,
+                redeemed_on: new Date().toISOString(),
+              })
+              .eq("code", code);
+
+            const { data: codes } = await supabase
+              .from("cashback_codes")
+              .select("*")
+              .eq("redeemed_by", `${phoneNumber}`);
+
+            if (
+              codes &&
+              codes.filter((code) => code.funds_disbursed == false).length > 10
+            ) {
+              await transporter.sendMail({
+                ...mailOptions,
+                subject: `User ${phoneNumber} is ready to be paid`,
+                text: `User ${phoneNumber} is ready to be paid`,
+                html: `<h1>User ready to be paid</h1><p>The user with phone number: ${phoneNumber} has redeemed more than 10 codes that haven't been paid for.</p>`,
+              });
+            }
+
+            if (error) {
+              response = `END Oops, something went wrong. Please try again`;
+            } else {
+              response = `END Successfully redeemed code ${code}`;
+            }
           }
         }
       }
-    } else if (text == "2") {
-      //================================================================
-      //Gather users data
-      //================================================================
-      const { data: codes, error } = await supabase
-        .from("cashback_codes")
-        .select("*")
-        .eq("redeemed_by", `${phoneNumber}`);
-
-      if (error) {
-        response = `END Oops, something went wrong. Please try again`;
-      } else {
-        if (codes.filter((code) => code.funds_disbursed == false).length > 10) {
-          response = `END You have redeemed a total of ${codes.length} codes. You should be expecting payment soon.`;
-        } else {
-          response = `END You have redeemed a total of ${
-            codes.length
-          } codes. You have ${
-            10 - codes.filter((code) => code.funds_disbursed == false).length
-          } codes left to redeem until you can expect your next payment.`;
-        }
-      }
-    } else {
-      response = `END Invalid Option`;
+    } catch (error) {
+      console.log(error);
+      response = `END Oops, something went wrong. Please try again`;
     }
+
     console.log(response);
     return res.send(response);
   }
