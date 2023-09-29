@@ -79,7 +79,7 @@ export default async function handler(
               reason: "Too many wrong code attempts from ussd.",
             });
 
-            response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance or access the platform from the website.`;
+            response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance.`;
           } else {
             response = `END Please ensure you've entered a valid code. You have ${
               5 - user?.wrong_code_count
@@ -100,7 +100,7 @@ export default async function handler(
                 reason: "Too many wrong code attempts from ussd.",
               });
 
-              response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance or access the platform from the website.`;
+              response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance.`;
             } else {
               response = `END This code has already been redeemed. You have ${
                 5 - user?.wrong_code_count
