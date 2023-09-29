@@ -76,7 +76,7 @@ export default async function handler(
           if (user?.wrong_code_count >= 5) {
             await supabase.from("ban_list").insert({
               phone_number: phoneNumber,
-              reason: "Too many wrong code attempts from ussd.",
+              reason: "Invalid code entry.",
             });
 
             response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance.`;
@@ -97,7 +97,7 @@ export default async function handler(
             if (user?.wrong_code_count >= 5) {
               await supabase.from("ban_list").insert({
                 phone_number: phoneNumber,
-                reason: "Too many wrong code attempts from ussd.",
+                reason: "Attempting to redeem a redeemed code.",
               });
 
               response = `END You have attempted to redeem too many incorrect codes. Please contact support for assistance.`;
