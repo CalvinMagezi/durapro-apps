@@ -14,6 +14,13 @@ export interface ProfileType {
   position: string;
 }
 
+export interface BanlistUserType {
+  id: string;
+  created_at: string;
+  reason: string;
+  phone_number: string;
+}
+
 export interface SupplierType {
   id: string;
   name: string;

@@ -16,21 +16,29 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
 
   const sections: Section[] = [
     {
-      title: "Admin",
+      title: "Dashboard",
+      links: [{ title: "Statistics", href: "/apps/cashback-admin" }],
+    },
+    {
+      title: "Codes",
       links: [
-        { title: "Statistics", href: "/apps/cashback-admin" },
         { title: "All Codes", href: "/apps/cashback-admin/codes" },
         {
           title: "Generate Codes",
           href: "/apps/cashback-admin/codes/generate",
         },
-        // {
-        //   title: "All Users",
-        //   href: "/apps/cashback-admin/users",
-        // },
+      ],
+    },
+    {
+      title: "Users",
+      links: [
         {
           title: "Ready to pay",
           href: "/apps/cashback-admin/users/ready-to-pay",
+        },
+        {
+          title: "Ban List",
+          href: "/apps/cashback-admin/users/ban-list",
         },
       ],
     },
