@@ -245,6 +245,7 @@ function AllUsersTable({
                   )}
                   <Th>Phone Number</Th>
                   <Th>Unpaid Codes Redeemed </Th>
+                  {filter === "ready to pay" && <Th>Amount due</Th>}
                   <Th>Total Codes Redeemed </Th>
                   <Th>Confirm Payment</Th>
                 </Tr>
@@ -287,9 +288,18 @@ function AllUsersTable({
                         "text-green-500 font-bold"
                       }`}
                     >
-                      {CheckRedeemed(user.codes)}{" "}
-                      {`(Ugx ${CheckRedeemed(user.codes) * 500})`}
+                      {CheckRedeemed(user.codes)}
                     </Td>
+                    {filter === "ready to pay" && (
+                      <Td
+                        className={`${
+                          CheckRedeemed(user.codes) >= 10 &&
+                          "text-green-500 font-bold"
+                        }`}
+                      >
+                        {`(Ugx ${CheckRedeemed(user.codes) * 500})`}
+                      </Td>
+                    )}
                     <Td>{user.codes?.length}</Td>
                     <Td>
                       <IconButton
