@@ -77,42 +77,30 @@ function AllUsersTable({
 
     let wb = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });
 
-    if (filter === "ready to pay") {
-      for (let i = 0; i < users.length; i++) {
-        const element = users[i];
-        console.log(element.codes);
+    // if (filter === "ready to pay") {
+    for (let i = 0; i < users.length; i++) {
+      const element = users[i];
+      console.log(element.codes);
 
-        //Sort by whether codes funds have been disbursed
+      //Sort by whether codes funds have been disbursed
 
-        const ws = XLSX.utils.json_to_sheet(
-          element.codes
-            .filter((code) => code.funds_disbursed === false)
-            .map((code) => {
-              return {
-                ...code,
-                redeemed_on: format(
-                  new Date(code.redeemed_on),
-                  "PPpp"
-                ).replaceAll(" ", "_"),
-              };
-            })
-        );
+      const ws = XLSX.utils.json_to_sheet(
+        element.codes
+          .filter((code) => code.funds_disbursed === false)
+          .map((code) => {
+            return {
+              ...code,
+              redeemed_on: format(
+                new Date(code.redeemed_on),
+                "PPpp"
+              ).replaceAll(" ", "_"),
+            };
+          })
+      );
 
-        // const ws = XLSX.utils.json_to_sheet(
-        //   element.redeemed_codes.map((code) => {
-        //     return {
-        //       ...code,
-        //       redeemed_on: format(
-        //         new Date(code.redeemed_on),
-        //         "PPpp"
-        //       ).replaceAll(" ", "_"),
-        //     };
-        //   })
-        // );
-
-        XLSX.utils.book_append_sheet(wb, ws, element.codes[0].redeemed_by);
-      }
+      XLSX.utils.book_append_sheet(wb, ws, element.codes[0].redeemed_by);
     }
+    // }
 
     XLSX.writeFile(
       wb,
@@ -156,6 +144,7 @@ function AllUsersTable({
         funds_disbursed: true,
         mm_confirmation: data.momo_number,
         disbursed_on: new Date().toISOString(),
+        redeemed: true,
       })
       .eq("redeemed_by", currentUser?.codes[0]?.redeemed_by);
 

@@ -28,7 +28,13 @@ function CashbackAdminDashboard() {
     <CashbackAdminLayout>
       <DefaultDashboardBanner title="Cashback Admin" />
       <Skeleton isLoaded={!isLoading}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-10">
+          <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
+            <Heading size="md">Total Users</Heading>
+            <Heading size="lg">
+              {numeral(data?.total_users).format("0,0")}
+            </Heading>
+          </div>
           <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
             <Heading size="md">Total Codes</Heading>
             <Heading size="lg">
@@ -42,9 +48,10 @@ function CashbackAdminDashboard() {
             </Heading>
           </div>
           <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
-            <Heading size="md">Total Users</Heading>
+            <Heading size="md">Total Paid Out</Heading>
             <Heading size="lg">
-              {numeral(data?.total_users).format("0,0")}
+              Ugx
+              {numeral(Number(data?.total_redeemed_codes) * 500).format("0,0")}
             </Heading>
           </div>
         </div>

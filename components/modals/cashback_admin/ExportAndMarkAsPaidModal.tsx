@@ -57,6 +57,7 @@ function ExportAndMarkAsPaidModal({
           funds_disbursed: true,
           mm_confirmation: momo_number,
           disbursed_on: new Date().toISOString(),
+          redeemed: true,
         })
         .eq("redeemed_by", user.codes[0]?.redeemed_by);
 
