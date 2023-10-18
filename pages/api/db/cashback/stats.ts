@@ -35,12 +35,19 @@ export default async function handler(
       .neq("redeemed_on", null)
       .limit(10);
 
+    const total_paid_out = await supabase
+      .from("cashback_codes")
+      .select("code", { count: "exact", head: true })
+      .eq("redeemed", true)
+      .eq("funds_disbursed", true);
+
     return res.status(200).json({
       total_codes: total_codes.count,
       total_users: total_users.count,
       total_redeemed_codes: total_redeemed_codes.count,
       latest_users: latest_users.data,
       latest_redeemed_codes: latest_redeemed_codes.data,
+      total_paid_out: total_paid_out.count,
     });
   } catch (error) {
     console.error(error);

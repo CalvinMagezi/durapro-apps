@@ -24,6 +24,7 @@ function CashbackAdminDashboard() {
     const data = await response.json();
     return data;
   });
+
   return (
     <CashbackAdminLayout>
       <DefaultDashboardBanner title="Cashback Admin" />
@@ -48,10 +49,43 @@ function CashbackAdminDashboard() {
             </Heading>
           </div>
           <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
-            <Heading size="md">Total Paid Out</Heading>
+            <Heading size="md">Total Amount Paid Out</Heading>
+            <Heading size="lg">
+              Ugx
+              {numeral(Number(data?.total_paid_out) * 500).format("0,0")}
+            </Heading>
+          </div>
+          <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
+            <Heading size="md">Total # of Codes Paid</Heading>
+            <Heading size="lg">
+              {numeral(Number(data?.total_paid_out)).format("0,0")}
+            </Heading>
+          </div>
+          <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
+            <Heading size="md">Total # of Codes Unpaid</Heading>
+            <Heading size="lg">
+              {numeral(
+                Number(data?.total_redeemed_codes) -
+                  Number(data?.total_paid_out)
+              ).format("0,0")}
+            </Heading>
+          </div>
+          <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
+            <Heading size="md"> Total Value Redeemed</Heading>
             <Heading size="lg">
               Ugx
               {numeral(Number(data?.total_redeemed_codes) * 500).format("0,0")}
+            </Heading>
+          </div>
+          <div className="rounded-lg bg-gray-100 flex flex-col text-center items-center space-y-4 ">
+            <Heading size="md">Forecasted Code payments</Heading>
+            <Heading size="lg">
+              Ugx
+              {numeral(
+                (Number(data?.total_redeemed_codes) -
+                  Number(data?.total_paid_out)) *
+                  500
+              ).format("0,0")}
             </Heading>
           </div>
         </div>
