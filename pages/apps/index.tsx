@@ -38,6 +38,7 @@ function AppsChoicesPage() {
       "daniel.musinguzi@durapro.co.ug",
       "bob.kugonza@durapro.co.ug",
       "gregmagezi@gmail.com",
+      "hadija.nahara@durapro.co.ug",
     ];
 
     if (profile.role === "admin" || allowedEmails.includes(profile.email)) {

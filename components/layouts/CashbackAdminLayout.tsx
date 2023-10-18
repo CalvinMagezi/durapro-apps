@@ -45,7 +45,16 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
   ];
 
   useEffect(() => {
-    if (profile?.role === "admin") {
+    if (!profile) return;
+
+    const allowedEmails = [
+      "molly.ngute@tilemarket.co.ug",
+      "daniel.musinguzi@durapro.co.ug",
+      "bob.kugonza@durapro.co.ug",
+      "gregmagezi@gmail.com",
+      "hadija.nahara@durapro.co.ug",
+    ];
+    if (profile?.role === "admin" || allowedEmails.includes(profile?.email)) {
       setAvailableSections(sections);
     }
   }, [profile]);
