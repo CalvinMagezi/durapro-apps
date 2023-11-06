@@ -48,6 +48,28 @@ function AllCodesPage() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
+  const [page, setPage] = useState(1);
+
+  const fetchCodes = async () => {
+    const PAGE_SIZE = 1000;
+    let codes: any[] = [];
+
+    const { data: pageData, error } = await supabase
+      .from("cashback_codes")
+      .select("*")
+      .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+
+    if (error) {
+      throw new Error("Failed to fetch cashback codes");
+    }
+
+    if (pageData) {
+      codes = [...codes, ...pageData];
+    }
+
+    return codes as CashbackCodeType[];
+  };
+
   const { register, handleSubmit } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
@@ -74,25 +96,7 @@ function AllCodesPage() {
     setLoading(false);
   };
 
-  const fetchAllCodes = async () => {
-    const { data: allCodes, error } = await supabase
-      .from("cashback_codes")
-      .select("*");
-
-    if (error) {
-      console.log(error);
-      return [] as CashbackCodeType[];
-    }
-
-    if (allCodes) {
-      console.log(allCodes);
-      return allCodes as CashbackCodeType[];
-    } else {
-      return [] as CashbackCodeType[];
-    }
-  };
-
-  const { data, isLoading } = useQuery(["all_codes"], fetchAllCodes);
+  const { data, isLoading } = useQuery(["all_codes"], fetchCodes);
 
   useEffect(() => {
     if (!data || data?.length === 0) return;
@@ -127,7 +131,7 @@ function AllCodesPage() {
           .slice(0, show)
       );
     }
-  }, [term, show, data, sortBy]);
+  }, [term, show, data, sortBy, filter]);
 
   const filterCodes = async (filter: string) => {
     setLoading(true);
@@ -212,20 +216,22 @@ function AllCodesPage() {
             <>
               <div className="flex items-center space-x-4 w-full">
                 <div>
-                  <Text className="font-light mb-3 text-sm">
-                    0 to {show} of {data.length} records
-                  </Text>
+                  <Text className="font-light mb-3 text-sm">Page {page}</Text>
                   <Select
-                    defaultValue={show}
-                    onChange={(e) => setShow(parseInt(e.target.value))}
+                    defaultValue={page.toString()}
+                    onChange={async (e) => {
+                      setPage(parseInt(e.target.value));
+
+                      await fetchCodes();
+                    }}
                   >
-                    <option value={10}>10</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                    <option value={500}>500</option>
-                    <option value={1000}>1000</option>
-                    <option value={10000}>10000</option>
-                    <option value={20000}>20000</option>
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
+                    <option value={4}>4</option>
+                    <option value={5}>5</option>
+                    <option value={6}>6</option>
+                    <option value={7}>7</option>
                   </Select>
                 </div>
 
