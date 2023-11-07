@@ -25,6 +25,7 @@ import { useDownloadExcel } from "react-export-table-to-excel";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { queryClient } from "@/pages/_app";
 import { CashbackCodeType } from "@/typings";
+import * as XLSX from "xlsx";
 
 function AllCodesTable({
   codes,
@@ -38,11 +39,19 @@ function AllCodesTable({
 
   const tableRef = useRef(null);
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableRef.current,
-    filename: "Cashback Codes",
-    sheet: "Cashback Codes",
-  });
+  const exportToExcel = () => {
+    if (!codes) {
+      toast.error("No codes to export", {
+        duration: 3000,
+      });
+      return;
+    }
+    let table = document.getElementById("all_codes");
+
+    let wb = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });
+
+    XLSX.writeFile(wb, `Cashback Codes.xlsx`);
+  };
 
   const deleteCodes = async () => {
     if (codeIds.length === 0) return;
@@ -83,12 +92,12 @@ function AllCodesTable({
         aria-label="generate"
         icon={<SiMicrosoftexcel />}
         colorScheme="green"
-        onClick={onDownload}
+        onClick={exportToExcel}
         className="my-2"
       />
       <Flex overflow="auto">
         <TableContainer>
-          <Table variant="unstyled" mt={4} ref={tableRef}>
+          <Table variant="unstyled" mt={4} id="all_codes" ref={tableRef}>
             <Thead>
               <Tr color="gray">
                 {codeIds.length > 0 && (
