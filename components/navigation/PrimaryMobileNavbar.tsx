@@ -68,7 +68,7 @@ function PrimaryMobileNavbar({ sections }: { sections: Section[] }) {
           <DrawerBody color="white" bg="#1c3184">
             <div className="flex flex-col">
               <Link
-                href="/dashboard"
+                href="/apps"
                 style={{ textDecoration: "none", borderRadius: 0 }}
               >
                 <Flex
@@ -81,7 +81,7 @@ function PrimaryMobileNavbar({ sections }: { sections: Section[] }) {
                   data-active={true}
                   _active={{ bg: "#1c3184" }}
                 >
-                  Dashboard
+                  Apps
                   <Badge
                     w={5}
                     h={5}
