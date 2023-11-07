@@ -52,10 +52,12 @@ function AppsChoicesPage() {
         <Heading size="lg" className="mt-10 text-center">
           Select Application
         </Heading>
-        <Grid className="mt-6 grid-cols-1 items-center gap-8 p-3 md:grid-cols-2">
-          {allowedEmails.includes(profile?.email) && (
-            <>
-              {/* <GridItem>
+        {profile && (
+          <>
+            <Grid className="mt-6 grid-cols-1 items-center gap-8 p-3 md:grid-cols-2">
+              {allowedEmails.includes(profile.email) && (
+                <>
+                  {/* <GridItem>
                 <Link href="/apps/commission" passHref>
                   <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
                     <h3 className="text-2xl font-bold">
@@ -67,47 +69,49 @@ function AppsChoicesPage() {
                   </div>
                 </Link>
               </GridItem> */}
+                  <GridItem>
+                    <Link href="/apps/cashback-admin" passHref>
+                      <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
+                        <h3 className="text-2xl font-bold">
+                          Cashback Admin Application &rarr;
+                        </h3>
+                        <p className="mt-4 text-xl">
+                          Access the cashback admin application.
+                        </p>
+                      </div>
+                    </Link>
+                  </GridItem>
+                  {hasAccess && (
+                    <GridItem>
+                      <Link href="/apps/service-tracking" passHref>
+                        <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
+                          <h3 className="text-2xl font-bold">
+                            Servicing Tracking Application &rarr;
+                          </h3>
+                          <p className="mt-4 text-xl">
+                            Access the service tracking application.
+                          </p>
+                        </div>
+                      </Link>
+                    </GridItem>
+                  )}
+                </>
+              )}
               <GridItem>
-                <Link href="/apps/cashback-admin" passHref>
+                <Link href="/apps/cashback_feedback" passHref>
                   <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
                     <h3 className="text-2xl font-bold">
-                      Cashback Admin Application &rarr;
+                      Cashback Feedback Application &rarr;
                     </h3>
                     <p className="mt-4 text-xl">
-                      Access the cashback admin application.
+                      Access the cashback feedback application.
                     </p>
                   </div>
                 </Link>
               </GridItem>
-              {hasAccess && (
-                <GridItem>
-                  <Link href="/apps/service-tracking" passHref>
-                    <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
-                      <h3 className="text-2xl font-bold">
-                        Servicing Tracking Application &rarr;
-                      </h3>
-                      <p className="mt-4 text-xl">
-                        Access the service tracking application.
-                      </p>
-                    </div>
-                  </Link>
-                </GridItem>
-              )}
-            </>
-          )}
-          <GridItem>
-            <Link href="/apps/cashback_feedback" passHref>
-              <div className=" w-full cursor-pointer rounded-xl border p-6 text-left hover:border-[#273e87] hover:text-[#273e87] focus:text-[#273e87]">
-                <h3 className="text-2xl font-bold">
-                  Cashback Feedback Application &rarr;
-                </h3>
-                <p className="mt-4 text-xl">
-                  Access the cashback feedback application.
-                </p>
-              </div>
-            </Link>
-          </GridItem>
-        </Grid>
+            </Grid>
+          </>
+        )}
       </main>
       {profile?.first_login === false && <FirstLoginModal />}
 
