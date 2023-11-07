@@ -57,7 +57,7 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
     if (profile?.role === "admin" || allowedEmails.includes(profile?.email)) {
       setAvailableSections(sections);
     }
-  }, [profile]);
+  }, []);
   return (
     <PrimaryLayout sections={availableSections} cbfeedback={true}>
       <div className="w-full p-3 flex-grow h-screen">{children}</div>

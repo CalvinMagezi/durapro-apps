@@ -32,15 +32,21 @@ function FeedbackLayout({ children }: React.PropsWithChildren<{}>) {
   ];
 
   useEffect(() => {
-    if (
-      profile?.role === "admin" ||
-      profile?.email === "hadija.nahara@durapro.co.ug"
-    ) {
+    if (!profile) return;
+
+    const allowedEmails = [
+      "molly.ngute@tilemarket.co.ug",
+      "daniel.musinguzi@durapro.co.ug",
+      "bob.kugonza@durapro.co.ug",
+      "gregmagezi@gmail.com",
+      "hadija.nahara@durapro.co.ug",
+    ];
+    if (profile?.role === "admin" || allowedEmails.includes(profile.email)) {
       setAvailableSections(sections);
     } else {
       setAvailableSections([sections[0]]);
     }
-  }, [profile]);
+  }, []);
   return (
     <PrimaryLayout sections={availableSections} cbfeedback={true}>
       <div className="w-full p-3 flex-grow h-screen">{children}</div>

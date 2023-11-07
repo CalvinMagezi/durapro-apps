@@ -14,6 +14,14 @@ function AppsChoicesPage() {
   const [hasAccess, setHasAccess] = useState(false);
   const router = useRouter();
 
+  const allowedEmails = [
+    "molly.ngute@tilemarket.co.ug",
+    "daniel.musinguzi@durapro.co.ug",
+    "bob.kugonza@durapro.co.ug",
+    "gregmagezi@gmail.com",
+    "hadija.nahara@durapro.co.ug",
+  ];
+
   const logout = async () => {
     await supabase.auth
       .signOut()
@@ -33,14 +41,6 @@ function AppsChoicesPage() {
   useEffect(() => {
     if (!profile) return;
 
-    const allowedEmails = [
-      "molly.ngute@tilemarket.co.ug",
-      "daniel.musinguzi@durapro.co.ug",
-      "bob.kugonza@durapro.co.ug",
-      "gregmagezi@gmail.com",
-      "hadija.nahara@durapro.co.ug",
-    ];
-
     if (profile.role === "admin" || allowedEmails.includes(profile.email)) {
       setHasAccess(true);
     }
@@ -53,7 +53,7 @@ function AppsChoicesPage() {
           Select Application
         </Heading>
         <Grid className="mt-6 grid-cols-1 items-center gap-8 p-3 md:grid-cols-2">
-          {hasAccess && (
+          {allowedEmails.includes(profile?.email) && (
             <>
               {/* <GridItem>
                 <Link href="/apps/commission" passHref>
