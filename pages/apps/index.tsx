@@ -20,6 +20,7 @@ function AppsChoicesPage() {
     "bob.kugonza@durapro.co.ug",
     "gregmagezi@gmail.com",
     "hadija.nahara@durapro.co.ug",
+    "calvin.magezi@mts-africa.tech",
   ];
 
   const logout = async () => {

@@ -53,6 +53,7 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
       "bob.kugonza@durapro.co.ug",
       "gregmagezi@gmail.com",
       "hadija.nahara@durapro.co.ug",
+      "calvin.magezi@mts-africa.tech",
     ];
     if (profile?.role === "admin" || allowedEmails.includes(profile?.email)) {
       setAvailableSections(sections);
