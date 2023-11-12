@@ -52,6 +52,7 @@ function CashbackAdminLayout({ children }: React.PropsWithChildren<{}>) {
       "daniel.musinguzi@durapro.co.ug",
       "bob.kugonza@durapro.co.ug",
       "gregmagezi@gmail.com",
+      "greg.magezi@durapro.co.ug",
       "hadija.nahara@durapro.co.ug",
       "calvin.magezi@mts-africa.tech",
     ];
