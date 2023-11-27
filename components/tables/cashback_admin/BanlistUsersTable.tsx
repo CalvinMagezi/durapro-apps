@@ -56,6 +56,8 @@ function BanlistUsersTable({
   const router = useRouter();
   const tableRef = useRef(null);
 
+  console.log(banlist_user);
+
   const exportToExcel = () => {
     if (!banlist_user) {
       toast.error("No data to export", {

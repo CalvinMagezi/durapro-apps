@@ -232,9 +232,9 @@ function AllUsersTable({
                       </div>
                     </Th>
                   )}
+                  {filter === "ready to pay" && <Th>Amount due</Th>}
                   <Th>Phone Number</Th>
                   <Th>Unpaid Codes Redeemed </Th>
-                  {filter === "ready to pay" && <Th>Amount due</Th>}
                   <Th>Total Codes Redeemed </Th>
                   <Th>Confirm Payment</Th>
                 </Tr>
@@ -263,6 +263,16 @@ function AllUsersTable({
                         />
                       </Td>
                     )}
+                    {filter === "ready to pay" && (
+                      <Td
+                        className={`${
+                          CheckRedeemed(user.codes) >= 10 &&
+                          "text-green-500 font-bold"
+                        }`}
+                      >
+                        {`(Ugx ${CheckRedeemed(user.codes) * 500})`}
+                      </Td>
+                    )}
                     <Td>
                       <Link
                         href={`/apps/cashback-admin/users/${user.codes[0]?.redeemed_by}`}
@@ -279,16 +289,7 @@ function AllUsersTable({
                     >
                       {CheckRedeemed(user.codes)}
                     </Td>
-                    {filter === "ready to pay" && (
-                      <Td
-                        className={`${
-                          CheckRedeemed(user.codes) >= 10 &&
-                          "text-green-500 font-bold"
-                        }`}
-                      >
-                        {`(Ugx ${CheckRedeemed(user.codes) * 500})`}
-                      </Td>
-                    )}
+
                     <Td>{user.codes?.length}</Td>
                     <Td>
                       <IconButton
