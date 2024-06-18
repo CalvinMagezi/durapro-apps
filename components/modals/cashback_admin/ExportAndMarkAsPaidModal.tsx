@@ -118,7 +118,6 @@ function ExportAndMarkAsPaidModal({
     setLoading(false);
     onClose();
     queryClient.invalidateQueries(["all_users"]);
-    router.reload();
   };
   return (
     <>

@@ -1,8 +1,7 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "0 5 * * *"
+  "functions": {
+    "api/db/users/ready-to-pay.ts": {
+      "maxDuration": 120
     }
-  ]
+  }
 }

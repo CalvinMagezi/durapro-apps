@@ -17,7 +17,6 @@ import CashbackAdminLayout from "@/components/layouts/CashbackAdminLayout";
 import { queryClient } from "@/pages/_app";
 import TableLoading from "@/components/loaders/TableLoading";
 import AllUsersTable from "@/components/tables/cashback_admin/AllUsersTable";
-import { supabase } from "@/lib/supabaseClient";
 
 interface CashbackUserWithCodesType {
   codes: CashbackCodeType[];

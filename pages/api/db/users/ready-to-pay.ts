@@ -1,17 +1,48 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
 import { CashbackCodeType } from "@/typings";
 
-function CheckRedeemed(redeemed_codes: CashbackCodeType[]) {
-  if (redeemed_codes.length === 0) return 0;
-  let count = 0;
-  redeemed_codes.forEach((code) => {
-    if (code.funds_disbursed === false) {
-      count += 1;
+function checkRedeemed(redeemedCodes: CashbackCodeType[]): number {
+  return redeemedCodes.reduce((count, code) => {
+    return !code.funds_disbursed ? count + 1 : count;
+  }, 0);
+}
+
+interface FetchedCashbackCode {
+  redeemed_by: string | null;
+  redeemed_on: string;
+  funds_disbursed: boolean;
+  code: string;
+}
+
+async function fetchAllCashbackCodes(
+  pageSize: number
+): Promise<FetchedCashbackCode[]> {
+  let page = 1;
+  let codes: FetchedCashbackCode[] = [];
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data: pageData, error } = await supabase
+      .from("cashback_codes")
+      .select("redeemed_by, redeemed_on, funds_disbursed, code")
+      .eq("redeemed", true)
+      .order("redeemed_on", { ascending: true })
+      .range((page - 1) * pageSize, page * pageSize - 1);
+
+    if (error) {
+      throw new Error("Failed to fetch cashback codes");
     }
-  });
-  return count;
+
+    if (pageData.length === 0) {
+      hasMore = false;
+    } else {
+      codes = codes.concat(pageData);
+      page++;
+    }
+  }
+
+  return codes;
 }
 
 export default async function handler(
@@ -20,63 +51,27 @@ export default async function handler(
 ) {
   try {
     const PAGE_SIZE = 1000;
-    let codes: any[] = [];
-    let page = 1;
+    const codes = await fetchAllCashbackCodes(PAGE_SIZE);
 
-    while (true) {
-      const { data: pageData, error } = await supabase
-        .from("cashback_codes")
-        .select("*")
-        .eq("redeemed", true)
-        .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
-
-      if (error) {
-        throw new Error("Failed to fetch cashback codes");
-      }
-
-      if (pageData.length === 0) {
-        break;
-      }
-
-      codes = [...codes, ...pageData];
-      page++;
-    }
-
-    const usersWithCodes: {
-      [key: string]: {
-        codes: CashbackCodeType[];
-        first_time_redeemed: boolean;
-      };
-    } = codes.reduce((acc, code) => {
+    const usersWithCodes = codes.reduce<Record<string, any>>((acc, code) => {
       const { redeemed_by, redeemed_on } = code;
       if (redeemed_by) {
         if (!acc[redeemed_by]) {
           acc[redeemed_by] = {
             codes: [],
-            first_time_redeemed: false,
+            first_time_redeemed:
+              new Date(redeemed_on).getFullYear() === new Date().getFullYear(),
           };
         }
-        if (
-          !acc[redeemed_by].codes.some(
-            (c: CashbackCodeType) => c.code === code.code
-          )
-        ) {
-          acc[redeemed_by].codes.push(code);
-          if (acc[redeemed_by].first_time_redeemed) {
-            acc[redeemed_by].first_time_redeemed =
-              new Date(redeemed_on).getFullYear() === new Date().getFullYear();
-          }
-        }
+        acc[redeemed_by].codes.push(code);
       }
       return acc;
     }, {});
 
-    // console.table(data);
-
     const dataArray = Object.values(usersWithCodes);
 
     const rtp = dataArray
-      .filter((user) => CheckRedeemed(user.codes) >= 10)
+      .filter((user) => checkRedeemed(user.codes) >= 10)
       .sort((a, b) => b.codes.length - a.codes.length);
 
     res.status(200).json(rtp);
@@ -89,6 +84,5 @@ export default async function handler(
 export const config = {
   api: {
     responseLimit: false,
-    // responseLimit: '8mb',
   },
 };
