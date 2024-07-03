@@ -56,10 +56,3 @@ export default async function handler(
       .json({ message: "An error occurred. Please try again." });
   }
 }
-
-export const config = {
-  api: {
-    responseLimit: false,
-    // responseLimit: '8mb',
-  },
-};

@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/db/users/ready-to-pay.ts": {
-      "maxDuration": 120
-    }
-  }
-}
