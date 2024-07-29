@@ -31,20 +31,14 @@ export default async function handler(
           });
         }
 
-        response = `END Thank you for your interest in Quickset Cashback! 
-
-We've improved our service to provide you with a better experience. Please visit https://quickset-apps.vercel.app to access our new web application.
-
-There, you can easily redeem your codes and enjoy additional features. We appreciate your participation and look forward to serving you on our new platform!`;
+        response = `END Quickset Cashback: Visit our new web app at https://quickset-apps.vercel.app`;
       } else {
         // If the user has entered any text (trying to input a code)
-        response = `END We've recently upgraded our service. To redeem your code and access more features, please visit https://quickset-apps.vercel.app
-
-Thank you for your understanding and continued support!`;
+        response = `END Quickset Cashback: Visit our new web app at https://quickset-apps.vercel.app`;
       }
     } catch (error) {
       console.log(error);
-      response = `END We apologize, but an error occurred while processing your request. Please visit https://quickset-apps.vercel.app to access our services. Thank you for your patience.`;
+      response = `END Quickset Cashback: Visit our new web app at https://quickset-apps.vercel.app`;
     }
 
     console.log(response);

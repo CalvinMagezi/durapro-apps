@@ -75,7 +75,7 @@ function ReadyToPayPage() {
     } else {
       setUsers(
         data
-          .slice(0, show)
+          ?.slice(0, show)
           .sort((a, b) => CheckRedeemed(b.codes) - CheckRedeemed(a.codes))
       );
     }
