@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "backup:database": "node scripts/backup/backup-database.js",
+    "backup:verify": "node scripts/backup/verify-backup.js",
+    "backup:dry-run": "node scripts/backup/cleanup-dry-run.js",
+    "backup:checklist": "./scripts/backup/pre-cleanup-checklist.sh"
   },
   "dependencies": {
     "@apollo/client": "^3.7.17",
