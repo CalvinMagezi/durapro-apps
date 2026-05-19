@@ -27,14 +27,13 @@ async function fetchAllCashbackCodes(
       .from("cashback_codes")
       .select("redeemed_by, redeemed_on, funds_disbursed, code")
       .eq("redeemed", true)
-      .order("redeemed_on", { ascending: true })
       .range((page - 1) * pageSize, page * pageSize - 1);
 
     if (error) {
-      throw new Error("Failed to fetch cashback codes");
+      throw new Error(`Supabase error: ${error.code} — ${error.message}`);
     }
 
-    if (pageData.length === 0) {
+    if (!pageData || pageData.length === 0) {
       hasMore = false;
     } else {
       codes = codes.concat(pageData);
@@ -76,7 +75,8 @@ export default async function handler(
 
     res.status(200).json(rtp);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "An error occurred. Please try again." });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[ready-to-pay]", message);
+    res.status(500).json({ message });
   }
 }

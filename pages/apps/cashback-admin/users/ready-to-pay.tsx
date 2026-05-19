@@ -38,12 +38,15 @@ function ReadyToPayPage() {
       const users = await fetch("/api/db/users/ready-to-pay")
         .then(async (response) => {
           const data = await response.json();
-          // console.log(data);
-          if (data) {
-            return data as CashbackUserWithCodesType[];
-          } else {
+          if (!response.ok) {
+            console.error("ready-to-pay API error:", data);
             return [] as CashbackUserWithCodesType[];
           }
+          if (Array.isArray(data)) {
+            return data as CashbackUserWithCodesType[];
+          }
+          console.error("ready-to-pay unexpected response shape:", data);
+          return [] as CashbackUserWithCodesType[];
         })
         .catch((error) => {
           console.error(error);
@@ -66,7 +69,7 @@ function ReadyToPayPage() {
   }
 
   useEffect(() => {
-    if (!data || Object.keys(data).length === 0) return;
+    if (!Array.isArray(data) || data.length === 0) return;
 
     if (term) {
       setUsers(
